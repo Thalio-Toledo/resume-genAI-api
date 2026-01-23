@@ -1,0 +1,1245 @@
+basePath: /
+definitions:
+  model.Certification:
+    properties:
+      date_issued:
+        type: string
+      id:
+        type: string
+      issuer:
+        type: string
+      name:
+        type: string
+    type: object
+  model.Contact:
+    properties:
+      email:
+        type: string
+      phone_number:
+        type: string
+    type: object
+  model.Education:
+    properties:
+      degree:
+        type: string
+      end_date:
+        type: string
+      field:
+        type: string
+      id:
+        type: string
+      institution:
+        type: string
+      start_date:
+        type: string
+    type: object
+  model.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  model.Experience:
+    properties:
+      company:
+        type: string
+      description:
+        type: string
+      end_date:
+        type: string
+      id:
+        type: string
+      is_current:
+        type: boolean
+      role:
+        type: string
+      start_date:
+        type: string
+    type: object
+  model.Language:
+    properties:
+      id:
+        type: string
+      level:
+        type: string
+      name:
+        type: string
+    type: object
+  model.Profile:
+    properties:
+      birthdate:
+        type: string
+      certifications:
+        items:
+          $ref: '#/definitions/model.Certification'
+        type: array
+      contacts:
+        items:
+          $ref: '#/definitions/model.Contact'
+        type: array
+      description:
+        type: string
+      educations:
+        items:
+          $ref: '#/definitions/model.Education'
+        type: array
+      email:
+        type: string
+      experiences:
+        items:
+          $ref: '#/definitions/model.Experience'
+        type: array
+      id:
+        type: integer
+      languages:
+        items:
+          $ref: '#/definitions/model.Language'
+        type: array
+      name:
+        type: string
+      phone_number:
+        type: string
+      projects:
+        items:
+          $ref: '#/definitions/model.Project'
+        type: array
+      skills:
+        items:
+          $ref: '#/definitions/model.Skill'
+        type: array
+      social_medias:
+        items:
+          $ref: '#/definitions/model.SocialMedia'
+        type: array
+    type: object
+  model.Project:
+    properties:
+      description:
+        type: string
+      id:
+        type: string
+      link:
+        type: string
+      name:
+        type: string
+    type: object
+  model.Resume:
+    properties:
+      certification_ids:
+        description: IDs das certificações selecionadas
+        items:
+          type: string
+        type: array
+      contact_ids:
+        description: IDs dos contatos selecionados
+        items:
+          type: string
+        type: array
+      education_ids:
+        description: IDs das formações selecionadas
+        items:
+          type: string
+        type: array
+      experience_ids:
+        description: IDs das experiências selecionadas
+        items:
+          type: string
+        type: array
+      id:
+        type: string
+      language_ids:
+        description: IDs dos idiomas selecionados
+        items:
+          type: string
+        type: array
+      profile_id:
+        type: string
+      project_ids:
+        description: IDs dos projetos selecionados
+        items:
+          type: string
+        type: array
+      skill_ids:
+        description: IDs das skills selecionadas
+        items:
+          type: string
+        type: array
+      social_media_ids:
+        description: IDs das redes sociais selecionadas
+        items:
+          type: string
+        type: array
+    type: object
+  model.Skill:
+    properties:
+      id:
+        type: string
+      level:
+        type: string
+      name:
+        type: string
+    type: object
+  model.SocialMedia:
+    properties:
+      handle:
+        type: string
+      link:
+        type: string
+      platform:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API para gerenciamento de perfis e currículos com IA.
+  title: Resume GenAI API
+  version: "1.0"
+paths:
+  /certifications/:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Certification'
+            type: array
+      summary: Lista todas as certificações
+      tags:
+      - certifications
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Certificação a ser criada
+        in: body
+        name: certification
+        required: true
+        schema:
+          $ref: '#/definitions/model.Certification'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Certification'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Cria uma nova certificação
+      tags:
+      - certifications
+  /certifications/{id}:
+    delete:
+      parameters:
+      - description: ID da certificação
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Remove uma certificação
+      tags:
+      - certifications
+    get:
+      parameters:
+      - description: ID da certificação
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Certification'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Busca certificação por ID
+      tags:
+      - certifications
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID da certificação
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Certificação atualizada
+        in: body
+        name: certification
+        required: true
+        schema:
+          $ref: '#/definitions/model.Certification'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Certification'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Atualiza uma certificação
+      tags:
+      - certifications
+  /contacts/:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Contact'
+            type: array
+      summary: Lista todos os contatos
+      tags:
+      - contacts
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Contato a ser criado
+        in: body
+        name: contact
+        required: true
+        schema:
+          $ref: '#/definitions/model.Contact'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Contact'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Cria um novo contato
+      tags:
+      - contacts
+  /contacts/{email}:
+    delete:
+      parameters:
+      - description: Email do contato
+        in: path
+        name: email
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Remove um contato
+      tags:
+      - contacts
+    get:
+      parameters:
+      - description: Email do contato
+        in: path
+        name: email
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Contact'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Busca contato por email
+      tags:
+      - contacts
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Email do contato
+        in: path
+        name: email
+        required: true
+        type: string
+      - description: Contato atualizado
+        in: body
+        name: contact
+        required: true
+        schema:
+          $ref: '#/definitions/model.Contact'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Contact'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Atualiza um contato
+      tags:
+      - contacts
+  /educations/:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Education'
+            type: array
+      summary: Lista todas as formações
+      tags:
+      - educations
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Formação a ser criada
+        in: body
+        name: education
+        required: true
+        schema:
+          $ref: '#/definitions/model.Education'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Education'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Cria uma nova formação
+      tags:
+      - educations
+  /educations/{id}:
+    delete:
+      parameters:
+      - description: ID da formação
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Remove uma formação
+      tags:
+      - educations
+    get:
+      parameters:
+      - description: ID da formação
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Education'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Busca formação por ID
+      tags:
+      - educations
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID da formação
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Formação atualizada
+        in: body
+        name: education
+        required: true
+        schema:
+          $ref: '#/definitions/model.Education'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Education'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Atualiza uma formação
+      tags:
+      - educations
+  /experiences/:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Experience'
+            type: array
+      summary: Lista todas as experiências
+      tags:
+      - experiences
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Experiência a ser criada
+        in: body
+        name: experience
+        required: true
+        schema:
+          $ref: '#/definitions/model.Experience'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Experience'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Cria uma nova experiência
+      tags:
+      - experiences
+  /experiences/{id}:
+    delete:
+      parameters:
+      - description: ID da experiência
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Remove uma experiência
+      tags:
+      - experiences
+    get:
+      parameters:
+      - description: ID da experiência
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Experience'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Busca experiência por ID
+      tags:
+      - experiences
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID da experiência
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Experiência atualizada
+        in: body
+        name: experience
+        required: true
+        schema:
+          $ref: '#/definitions/model.Experience'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Experience'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Atualiza uma experiência
+      tags:
+      - experiences
+  /languages/:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Language'
+            type: array
+      summary: Lista todos os idiomas
+      tags:
+      - languages
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Idioma a ser criado
+        in: body
+        name: language
+        required: true
+        schema:
+          $ref: '#/definitions/model.Language'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Language'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Cria um novo idioma
+      tags:
+      - languages
+  /languages/{id}:
+    delete:
+      parameters:
+      - description: ID do idioma
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Remove um idioma
+      tags:
+      - languages
+    get:
+      parameters:
+      - description: ID do idioma
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Language'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Busca idioma por ID
+      tags:
+      - languages
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID do idioma
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Idioma atualizado
+        in: body
+        name: language
+        required: true
+        schema:
+          $ref: '#/definitions/model.Language'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Language'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Atualiza um idioma
+      tags:
+      - languages
+  /profiles/:
+    get:
+      description: Retorna todos os perfis cadastrados
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Profile'
+            type: array
+      summary: Lista todos os perfis
+      tags:
+      - profiles
+    post:
+      consumes:
+      - application/json
+      description: Cria um novo perfil com os dados informados
+      parameters:
+      - description: Perfil a ser criado
+        in: body
+        name: profile
+        required: true
+        schema:
+          $ref: '#/definitions/model.Profile'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Profile'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Cria um novo perfil
+      tags:
+      - profiles
+  /profiles/{id}:
+    delete:
+      description: Remove um perfil pelo ID
+      parameters:
+      - description: ID do perfil
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Remove um perfil
+      tags:
+      - profiles
+    get:
+      description: Retorna um perfil pelo ID
+      parameters:
+      - description: ID do perfil
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Profile'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Busca perfil por ID
+      tags:
+      - profiles
+    put:
+      consumes:
+      - application/json
+      description: Atualiza um perfil existente pelo ID
+      parameters:
+      - description: ID do perfil
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Perfil atualizado
+        in: body
+        name: profile
+        required: true
+        schema:
+          $ref: '#/definitions/model.Profile'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Profile'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Atualiza um perfil
+      tags:
+      - profiles
+  /projects/:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Project'
+            type: array
+      summary: Lista todos os projetos
+      tags:
+      - projects
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Projeto a ser criado
+        in: body
+        name: project
+        required: true
+        schema:
+          $ref: '#/definitions/model.Project'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Project'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Cria um novo projeto
+      tags:
+      - projects
+  /projects/{id}:
+    delete:
+      parameters:
+      - description: ID do projeto
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Remove um projeto
+      tags:
+      - projects
+    get:
+      parameters:
+      - description: ID do projeto
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Project'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Busca projeto por ID
+      tags:
+      - projects
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID do projeto
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Projeto atualizado
+        in: body
+        name: project
+        required: true
+        schema:
+          $ref: '#/definitions/model.Project'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Project'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Atualiza um projeto
+      tags:
+      - projects
+  /resumes/:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Resume'
+            type: array
+      summary: Lista todos os currículos
+      tags:
+      - resumes
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Currículo a ser criado
+        in: body
+        name: resume
+        required: true
+        schema:
+          $ref: '#/definitions/model.Resume'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Resume'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Cria um novo currículo
+      tags:
+      - resumes
+  /resumes/{id}:
+    delete:
+      parameters:
+      - description: ID do currículo
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Remove um currículo
+      tags:
+      - resumes
+    get:
+      parameters:
+      - description: ID do currículo
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Resume'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Busca currículo por ID
+      tags:
+      - resumes
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID do currículo
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Currículo atualizado
+        in: body
+        name: resume
+        required: true
+        schema:
+          $ref: '#/definitions/model.Resume'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Resume'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Atualiza um currículo
+      tags:
+      - resumes
+  /skills/:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.Skill'
+            type: array
+      summary: Lista todas as skills
+      tags:
+      - skills
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Skill a ser criada
+        in: body
+        name: skill
+        required: true
+        schema:
+          $ref: '#/definitions/model.Skill'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Skill'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Cria uma nova skill
+      tags:
+      - skills
+  /skills/{id}:
+    delete:
+      parameters:
+      - description: ID da skill
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Remove uma skill
+      tags:
+      - skills
+    get:
+      parameters:
+      - description: ID da skill
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Skill'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Busca skill por ID
+      tags:
+      - skills
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID da skill
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Skill atualizada
+        in: body
+        name: skill
+        required: true
+        schema:
+          $ref: '#/definitions/model.Skill'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Skill'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: Atualiza uma skill
+      tags:
+      - skills
+swagger: "2.0"
