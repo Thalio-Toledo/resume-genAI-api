@@ -4,10 +4,11 @@ type ErrorResponse struct {
 	Error string `json:"error"`
 }
 type Profile struct {
-	ID          int    `json:"id"`
+	BaseModel
+	ProfileId   int    `json:"profile_id"`
 	Name        string `json:"name"`
 	Email       string `json:"email"`
-	Birthdate   string `json:"birthdate"`
+	Birthdate   string `json:"birth_date"`
 	PhoneNumber string `json:"phone_number"`
 	Description string `json:"description"`
 

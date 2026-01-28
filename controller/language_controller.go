@@ -97,7 +97,7 @@ func (ctrl *LanguageController) Update(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, model.ErrorResponse{Error: err.Error()})
 		return
 	}
-	lang.ID = id
+	lang.LanguageId = id
 	success, err := ctrl.useCase.Update(lang)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})

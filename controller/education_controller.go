@@ -97,7 +97,7 @@ func (ctrl *EducationController) Update(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, model.ErrorResponse{Error: err.Error()})
 		return
 	}
-	edu.ID = id
+	edu.EducationId = id
 	success, err := ctrl.useCase.Update(edu)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})

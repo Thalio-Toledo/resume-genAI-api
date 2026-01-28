@@ -1,4 +1,3 @@
-
 package repository
 
 import (
@@ -22,7 +21,7 @@ func (r *ExperienceRepository) GetAll() []model.Experience {
 
 func (r *ExperienceRepository) FindByID(id string) (*model.Experience, error) {
 	for _, e := range r.experiences {
-		if e.ID == id {
+		if e.ExperienceId == id {
 			return &e, nil
 		}
 	}
@@ -31,12 +30,12 @@ func (r *ExperienceRepository) FindByID(id string) (*model.Experience, error) {
 
 func (r *ExperienceRepository) Create(exp model.Experience) (string, error) {
 	r.experiences = append(r.experiences, exp)
-	return exp.ID, nil
+	return exp.ExperienceId, nil
 }
 
 func (r *ExperienceRepository) Update(exp model.Experience) (bool, error) {
 	for i, e := range r.experiences {
-		if e.ID == exp.ID {
+		if e.ExperienceId == exp.ExperienceId {
 			r.experiences[i] = exp
 			return true, nil
 		}
@@ -46,7 +45,7 @@ func (r *ExperienceRepository) Update(exp model.Experience) (bool, error) {
 
 func (r *ExperienceRepository) Delete(id string) (bool, error) {
 	for i, e := range r.experiences {
-		if e.ID == id {
+		if e.ExperienceId == id {
 			r.experiences = append(r.experiences[:i], r.experiences[i+1:]...)
 			return true, nil
 		}

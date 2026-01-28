@@ -13,7 +13,7 @@ func NewProjectUseCase(repo *repository.ProjectRepository) *ProjectUseCase {
 	return &ProjectUseCase{repo: repo}
 }
 
-func (uc *ProjectUseCase) GetAll() []model.Project {
+func (uc *ProjectUseCase) GetAll() ([]model.Project, error) {
 	return uc.repo.GetAll()
 }
 

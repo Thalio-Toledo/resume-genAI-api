@@ -97,7 +97,7 @@ func (ctrl *ExperienceController) Update(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, model.ErrorResponse{Error: err.Error()})
 		return
 	}
-	exp.ID = id
+	exp.ExperienceId = id
 	success, err := ctrl.useCase.Update(exp)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})

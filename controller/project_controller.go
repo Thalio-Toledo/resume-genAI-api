@@ -34,7 +34,11 @@ func (ctrl *ProjectController) RegisterRoutes(r *gin.Engine) {
 // @Success 200 {array} model.Project
 // @Router /projects/ [get]
 func (ctrl *ProjectController) GetAll(c *gin.Context) {
-	projs := ctrl.useCase.GetAll()
+	projs, err := ctrl.useCase.GetAll()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 	c.JSON(http.StatusOK, projs)
 }
 
@@ -97,7 +101,7 @@ func (ctrl *ProjectController) Update(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, model.ErrorResponse{Error: err.Error()})
 		return
 	}
-	proj.ID = id
+	proj.ProjectId = id
 	success, err := ctrl.useCase.Update(proj)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})

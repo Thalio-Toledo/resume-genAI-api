@@ -94,7 +94,7 @@ func (ctrl *ProfileController) Create(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	profile.ID = id
+	profile.ProfileId = id
 	c.JSON(http.StatusCreated, profile)
 }
 
@@ -121,7 +121,7 @@ func (ctrl *ProfileController) Update(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	profile.ID = id
+	profile.ProfileId = id
 	success, err := ctrl.useCase.Update(profile)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

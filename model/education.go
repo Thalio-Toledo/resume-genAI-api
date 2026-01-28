@@ -1,7 +1,7 @@
 package model
 
 type Education struct {
-	ID          string `json:"id"`
+	EducationId string `json:"education_id"`
 	Institution string `json:"institution"`
 	Degree      string `json:"degree"`
 	Field       string `json:"field"`

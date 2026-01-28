@@ -21,7 +21,7 @@ func (r *SkillRepository) GetAll() []model.Skill {
 
 func (r *SkillRepository) FindByID(id string) (*model.Skill, error) {
 	for _, s := range r.skills {
-		if s.ID == id {
+		if s.SkillId == id {
 			return &s, nil
 		}
 	}
@@ -30,12 +30,12 @@ func (r *SkillRepository) FindByID(id string) (*model.Skill, error) {
 
 func (r *SkillRepository) Create(skill model.Skill) (string, error) {
 	r.skills = append(r.skills, skill)
-	return skill.ID, nil
+	return skill.SkillId, nil
 }
 
 func (r *SkillRepository) Update(skill model.Skill) (bool, error) {
 	for i, s := range r.skills {
-		if s.ID == skill.ID {
+		if s.SkillId == skill.SkillId {
 			r.skills[i] = skill
 			return true, nil
 		}
@@ -45,7 +45,7 @@ func (r *SkillRepository) Update(skill model.Skill) (bool, error) {
 
 func (r *SkillRepository) Delete(id string) (bool, error) {
 	for i, s := range r.skills {
-		if s.ID == id {
+		if s.SkillId == id {
 			r.skills = append(r.skills[:i], r.skills[i+1:]...)
 			return true, nil
 		}

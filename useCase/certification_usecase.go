@@ -17,11 +17,11 @@ func (uc *CertificationUseCase) GetAll() ([]model.Certification, error) {
 	return uc.repo.GetAll()
 }
 
-func (uc *CertificationUseCase) FindByID(id string) (*model.Certification, error) {
+func (uc *CertificationUseCase) FindByID(id int) (*model.Certification, error) {
 	return uc.repo.FindByID(id)
 }
 
-func (uc *CertificationUseCase) Create(cert model.Certification) (string, error) {
+func (uc *CertificationUseCase) Create(cert model.Certification) (int, error) {
 	return uc.repo.Create(cert)
 }
 
@@ -29,6 +29,6 @@ func (uc *CertificationUseCase) Update(cert model.Certification) (bool, error) {
 	return uc.repo.Update(cert)
 }
 
-func (uc *CertificationUseCase) Delete(id string) (bool, error) {
+func (uc *CertificationUseCase) Delete(id int) (bool, error) {
 	return uc.repo.Delete(id)
 }

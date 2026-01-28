@@ -21,7 +21,7 @@ func (r *LanguageRepository) GetAll() []model.Language {
 
 func (r *LanguageRepository) FindByID(id string) (*model.Language, error) {
 	for _, l := range r.languages {
-		if l.ID == id {
+		if l.LanguageId == id {
 			return &l, nil
 		}
 	}
@@ -30,12 +30,12 @@ func (r *LanguageRepository) FindByID(id string) (*model.Language, error) {
 
 func (r *LanguageRepository) Create(lang model.Language) (string, error) {
 	r.languages = append(r.languages, lang)
-	return lang.ID, nil
+	return lang.LanguageId, nil
 }
 
 func (r *LanguageRepository) Update(lang model.Language) (bool, error) {
 	for i, l := range r.languages {
-		if l.ID == lang.ID {
+		if l.LanguageId == lang.LanguageId {
 			r.languages[i] = lang
 			return true, nil
 		}
@@ -45,7 +45,7 @@ func (r *LanguageRepository) Update(lang model.Language) (bool, error) {
 
 func (r *LanguageRepository) Delete(id string) (bool, error) {
 	for i, l := range r.languages {
-		if l.ID == id {
+		if l.LanguageId == id {
 			r.languages = append(r.languages[:i], r.languages[i+1:]...)
 			return true, nil
 		}

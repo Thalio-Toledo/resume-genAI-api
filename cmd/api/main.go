@@ -7,10 +7,13 @@
 package main
 
 import (
+	"context"
 	"log"
 	"resume-genAI-api/controller"
+	"resume-genAI-api/database"
 	"resume-genAI-api/repository"
 	"resume-genAI-api/useCase"
+	"time"
 
 	// Importa o pacote docs gerado pelo swag para registrar a documentação Swagger
 	_ "resume-genAI-api/cmd/api/docs"
@@ -24,6 +27,20 @@ import (
 func main() {
 	r := gin.Default()
 
+	db, err := database.Open()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	if err := db.PingContext(ctx); err != nil {
+		log.Fatal("Banco indisponível:", err)
+	}
+
+	log.Println("🚀 API iniciada e banco conectado")
+
 	// Swagger docs
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
@@ -34,7 +51,7 @@ func main() {
 	})
 
 	// Dependências
-	profileRepo := repository.NewProfileRepository()
+	profileRepo := repository.NewProfileRepository(db)
 	profileUC := useCase.NewProfileUseCase(profileRepo)
 	profileCtrl := controller.NewProfileController(profileUC)
 
@@ -58,7 +75,7 @@ func main() {
 	languageUC := useCase.NewLanguageUseCase(languageRepo)
 	languageCtrl := controller.NewLanguageController(languageUC)
 
-	projectRepo := repository.NewProjectRepository()
+	projectRepo := repository.NewProjectRepository(db)
 	projectUC := useCase.NewProjectUseCase(projectRepo)
 	projectCtrl := controller.NewProjectController(projectUC)
 

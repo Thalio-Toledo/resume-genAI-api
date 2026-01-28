@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"resume-genAI-api/model"
 	"resume-genAI-api/useCase"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -51,7 +52,7 @@ func (ctrl *CertificationController) GetAll(c *gin.Context) {
 // @Failure 404 {object} model.ErrorResponse
 // @Router /certifications/{id} [get]
 func (ctrl *CertificationController) FindByID(c *gin.Context) {
-	id := c.Param("id")
+	id, err := strconv.Atoi(c.Param("id"))
 	cert, err := ctrl.useCase.FindByID(id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, model.ErrorResponse{Error: err.Error()})
@@ -95,13 +96,13 @@ func (ctrl *CertificationController) Create(c *gin.Context) {
 // @Failure 404 {object} model.ErrorResponse
 // @Router /certifications/{id} [put]
 func (ctrl *CertificationController) Update(c *gin.Context) {
-	id := c.Param("id")
+	id, err := strconv.Atoi(c.Param("id"))
 	var cert model.Certification
 	if err := c.ShouldBindJSON(&cert); err != nil {
 		c.JSON(http.StatusBadRequest, model.ErrorResponse{Error: err.Error()})
 		return
 	}
-	cert.ID = id
+	cert.Certification_Id = id
 	success, err := ctrl.useCase.Update(cert)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
@@ -123,7 +124,7 @@ func (ctrl *CertificationController) Update(c *gin.Context) {
 // @Failure 404 {object} model.ErrorResponse
 // @Router /certifications/{id} [delete]
 func (ctrl *CertificationController) Delete(c *gin.Context) {
-	id := c.Param("id")
+	id, err := strconv.Atoi(c.Param("id"))
 	success, err := ctrl.useCase.Delete(id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})

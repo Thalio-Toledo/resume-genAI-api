@@ -19,23 +19,23 @@ func (r *CertificationRepository) GetAll() ([]model.Certification, error) {
 	return r.certifications, nil
 }
 
-func (r *CertificationRepository) FindByID(id string) (*model.Certification, error) {
+func (r *CertificationRepository) FindByID(id int) (*model.Certification, error) {
 	for _, c := range r.certifications {
-		if c.ID == id {
+		if c.Certification_Id == id {
 			return &c, nil
 		}
 	}
 	return nil, errors.New("Certification not found")
 }
 
-func (r *CertificationRepository) Create(cert model.Certification) (string, error) {
+func (r *CertificationRepository) Create(cert model.Certification) (int, error) {
 	r.certifications = append(r.certifications, cert)
-	return cert.ID, nil
+	return cert.Certification_Id, nil
 }
 
 func (r *CertificationRepository) Update(cert model.Certification) (bool, error) {
 	for i, c := range r.certifications {
-		if c.ID == cert.ID {
+		if c.Certification_Id == cert.Certification_Id {
 			r.certifications[i] = cert
 			return true, nil
 		}
@@ -43,9 +43,9 @@ func (r *CertificationRepository) Update(cert model.Certification) (bool, error)
 	return false, errors.New("Certification not found")
 }
 
-func (r *CertificationRepository) Delete(id string) (bool, error) {
+func (r *CertificationRepository) Delete(id int) (bool, error) {
 	for i, c := range r.certifications {
-		if c.ID == id {
+		if c.Certification_Id == id {
 			r.certifications = append(r.certifications[:i], r.certifications[i+1:]...)
 			return true, nil
 		}
