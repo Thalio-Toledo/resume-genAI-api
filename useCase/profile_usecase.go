@@ -19,7 +19,14 @@ func (uc *ProfileUseCase) Get() ([]model.Profile, error) {
 
 func (uc *ProfileUseCase) FindByID(id int) (*model.Profile, error) {
 	profile, _ := uc.repo.FindByID(id)
-	//profile.Projects, _ = uc.repo.GetProjectsByProfileID(&profile)
+	uc.repo.LoadEducations(profile)
+	uc.repo.LoadProjects(profile)
+	uc.repo.LoadCertifications(profile)
+	uc.repo.LoadContacts(profile)
+	uc.repo.LoadExperiences(profile)
+	uc.repo.LoadSkill(profile)
+	uc.repo.LoadLanguages(profile)
+	uc.repo.LoadSocialMedia(profile)
 	return profile, nil
 }
 

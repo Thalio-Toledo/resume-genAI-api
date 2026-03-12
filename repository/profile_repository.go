@@ -74,7 +74,6 @@ func (p *ProfileRepository) FindByID(id int) (*model.Profile, error) {
 		FROM profile
 		WHERE profile_id = @id
 	`
-
 	var profile model.Profile
 
 	err := p.db.QueryRow(query, sql.Named("id", id)).Scan(
@@ -135,11 +134,319 @@ func (p *ProfileRepository) LoadProjects(profile *model.Profile) error {
 	return nil
 }
 
-// func (p *ProfileRepository) LoadCertifications(profile *model.Profile ) error{
-// 	query := `
+func (p *ProfileRepository) LoadCertifications(profile *model.Profile) error {
+	query := `
+		SELECT 
+			 certification_id
+			,profile_id
+			,name
+			,issuer
+			,date_issued
+		FROM certification 
+		WHERE profile_id = @profile_id
+	`
+	rows, err := p.db.Query(query, sql.Named("profile_id", profile.ProfileId))
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
 
-// 	`
-// }
+	var certifications []model.Certification
+
+	for rows.Next() {
+		var certification model.Certification
+
+		err := rows.Scan(
+			&certification.Certification_Id,
+			&certification.ProfileId,
+			&certification.Name,
+			&certification.Issuer,
+			&certification.DateIssued,
+		)
+		if err != nil {
+			return err
+		}
+
+		certifications = append(certifications, certification)
+
+	}
+
+	if err := rows.Err(); err != nil {
+		return err
+	}
+
+	profile.Certifications = certifications
+	return nil
+}
+
+func (p *ProfileRepository) LoadContacts(profile *model.Profile) error {
+	query := `
+		SELECT
+			 contact_id
+			,profile_id
+			,email
+			,phone_number
+		FROM contact
+		WHERE profile_id = @profile_id
+	`
+	rows, err := p.db.Query(query, sql.Named("profile_id", profile.ProfileId))
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+
+	var contacts []model.Contact
+
+	for rows.Next() {
+		var contact model.Contact
+
+		err := rows.Scan(
+			&contact.ContactId,
+			&contact.ProfileId,
+			&contact.Email,
+			&contact.PhoneNumber,
+		)
+		if err != nil {
+			return err
+		}
+
+		contacts = append(contacts, contact)
+
+	}
+
+	if err := rows.Err(); err != nil {
+		return err
+	}
+
+	profile.Contacts = contacts
+	return nil
+}
+
+func (p *ProfileRepository) LoadEducations(profile *model.Profile) error {
+	query := `
+		  SELECT 
+			 education_id
+			,profile_id
+			,institution
+			,degree
+			,field
+			,start_date
+			,end_date
+  		FROM education
+		WHERE profile_id = @profile_id
+	`
+	rows, err := p.db.Query(query, sql.Named("profile_id", profile.ProfileId))
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+
+	var educations []model.Education
+
+	for rows.Next() {
+		var education model.Education
+
+		err := rows.Scan(
+			&education.EducationId,
+			&education.ProfileID,
+			&education.Institution,
+			&education.Degree,
+			&education.Field,
+			&education.StartDate,
+			&education.EndDate,
+		)
+		if err != nil {
+			return err
+		}
+
+		educations = append(educations, education)
+	}
+
+	if err := rows.Err(); err != nil {
+		return err
+	}
+
+	profile.Educations = educations
+	return nil
+}
+
+func (p *ProfileRepository) LoadExperiences(profile *model.Profile) error {
+	query := `
+		  SELECT 
+			 experience_id
+			,profile_id
+			,company
+			,is_current
+			,role
+			,description
+			,start_date
+			,end_date
+  		FROM experience
+		WHERE profile_id = @profile_id
+	`
+	rows, err := p.db.Query(query, sql.Named("profile_id", profile.ProfileId))
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+
+	var experiences []model.Experience
+
+	for rows.Next() {
+		var experience model.Experience
+
+		err := rows.Scan(
+			&experience.ExperienceId,
+			&experience.ProfileID,
+			&experience.Company,
+			&experience.IsCurrent,
+			&experience.Role,
+			&experience.Description,
+			&experience.StartDate,
+			&experience.EndDate,
+		)
+		if err != nil {
+			return err
+		}
+
+		experiences = append(experiences, experience)
+	}
+
+	if err := rows.Err(); err != nil {
+		return err
+	}
+
+	profile.Experiences = experiences
+	return nil
+}
+
+func (p *ProfileRepository) LoadLanguages(profile *model.Profile) error {
+	query := `
+		  SELECT 
+			 language_id
+			,profile_id
+			,name
+			,level
+  		FROM language
+		WHERE profile_id = @profile_id
+	`
+	rows, err := p.db.Query(query, sql.Named("profile_id", profile.ProfileId))
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+
+	var languages []model.Language
+
+	for rows.Next() {
+		var language model.Language
+
+		err := rows.Scan(
+			&language.LanguageId,
+			&language.ProfileID,
+			&language.Name,
+			&language.Level,
+		)
+		if err != nil {
+			return err
+		}
+
+		languages = append(languages, language)
+	}
+
+	if err := rows.Err(); err != nil {
+		return err
+	}
+
+	profile.Languages = languages
+	return nil
+}
+
+func (p *ProfileRepository) LoadSkill(profile *model.Profile) error {
+	query := `
+		  SELECT 
+			 skill_id
+			,profile_id
+			,name
+			,level
+  		FROM skill
+		WHERE profile_id = @profile_id
+	`
+	rows, err := p.db.Query(query, sql.Named("profile_id", profile.ProfileId))
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+
+	var skills []model.Skill
+
+	for rows.Next() {
+		var skill model.Skill
+
+		err := rows.Scan(
+			&skill.SkillId,
+			&skill.ProfileID,
+			&skill.Name,
+			&skill.Level,
+		)
+		if err != nil {
+			return err
+		}
+
+		skills = append(skills, skill)
+	}
+
+	if err := rows.Err(); err != nil {
+		return err
+	}
+
+	profile.Skills = skills
+	return nil
+}
+
+func (p *ProfileRepository) LoadSocialMedia(profile *model.Profile) error {
+	query := `
+		  SELECT 
+			 social_media_id
+			,profile_id
+			,platform
+			,handle
+			,link
+  		FROM social_media
+		WHERE profile_id = @profile_id
+	`
+	rows, err := p.db.Query(query, sql.Named("profile_id", profile.ProfileId))
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+
+	var socialMedias []model.SocialMedia
+
+	for rows.Next() {
+		var socialMedia model.SocialMedia
+
+		err := rows.Scan(
+			&socialMedia.SocialMediaId,
+			&socialMedia.ProfileId,
+			&socialMedia.Platform,
+			&socialMedia.Handle,
+			&socialMedia.Link,
+		)
+		if err != nil {
+			return err
+		}
+
+		socialMedias = append(socialMedias, socialMedia)
+	}
+
+	if err := rows.Err(); err != nil {
+		return err
+	}
+
+	profile.SocialMedias = socialMedias
+	return nil
+}
 
 func (p *ProfileRepository) Create(profile model.Profile) (int, error) {
 	query := `

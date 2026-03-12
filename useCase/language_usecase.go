@@ -13,12 +13,16 @@ func NewLanguageUseCase(repo *repository.LanguageRepository) *LanguageUseCase {
 	return &LanguageUseCase{repo: repo}
 }
 
-func (uc *LanguageUseCase) GetAll() []model.Language {
-	return uc.repo.GetAll()
+func (uc *LanguageUseCase) Get() ([]model.Language, error) {
+	return uc.repo.Get()
 }
 
 func (uc *LanguageUseCase) FindByID(id string) (*model.Language, error) {
 	return uc.repo.FindByID(id)
+}
+
+func (uc *LanguageUseCase) FindByProfileID(profileID int) ([]model.Language, error) {
+	return uc.repo.FindByProfileID(profileID)
 }
 
 func (uc *LanguageUseCase) Create(lang model.Language) (string, error) {

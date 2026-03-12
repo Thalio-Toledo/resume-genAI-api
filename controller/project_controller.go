@@ -17,13 +17,13 @@ func NewProjectController(uc *useCase.ProjectUseCase) *ProjectController {
 }
 
 func (ctrl *ProjectController) RegisterRoutes(r *gin.Engine) {
-	projs := r.Group("/projects")
+	projs := r.Group("/projects/")
 	{
-		projs.GET("/", ctrl.GetAll)
-		projs.GET(":id", ctrl.FindByID)
-		projs.POST("/", ctrl.Create)
-		projs.PUT(":id", ctrl.Update)
-		projs.DELETE(":id", ctrl.Delete)
+		projs.GET("", ctrl.GetAll)
+		projs.GET("/:id", ctrl.FindByID)
+		projs.POST("", ctrl.Create)
+		projs.PUT("/:id", ctrl.Update)
+		projs.DELETE("/:id", ctrl.Delete)
 	}
 }
 
@@ -34,7 +34,7 @@ func (ctrl *ProjectController) RegisterRoutes(r *gin.Engine) {
 // @Success 200 {array} model.Project
 // @Router /projects/ [get]
 func (ctrl *ProjectController) GetAll(c *gin.Context) {
-	projs, err := ctrl.useCase.GetAll()
+	projs, err := ctrl.useCase.Get()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

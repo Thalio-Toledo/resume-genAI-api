@@ -18,6 +18,7 @@ require (
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/mailru/easyjson v0.7.6 // indirect
 	github.com/microsoft/go-mssqldb v1.9.6 // indirect
+	github.com/rs/cors v1.11.1 // indirect
 	github.com/shopspring/decimal v1.4.0 // indirect
 	github.com/swaggo/swag v1.8.12 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect

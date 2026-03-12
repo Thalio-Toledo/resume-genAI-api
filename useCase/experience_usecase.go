@@ -13,12 +13,16 @@ func NewExperienceUseCase(repo *repository.ExperienceRepository) *ExperienceUseC
 	return &ExperienceUseCase{repo: repo}
 }
 
-func (uc *ExperienceUseCase) GetAll() []model.Experience {
-	return uc.repo.GetAll()
+func (uc *ExperienceUseCase) Get() ([]model.Experience, error) {
+	return uc.repo.Get()
 }
 
 func (uc *ExperienceUseCase) FindByID(id string) (*model.Experience, error) {
 	return uc.repo.FindByID(id)
+}
+
+func (uc *ExperienceUseCase) FindByProfileID(profileID int) ([]model.Experience, error) {
+	return uc.repo.FindByProfileID(profileID)
 }
 
 func (uc *ExperienceUseCase) Create(exp model.Experience) (string, error) {

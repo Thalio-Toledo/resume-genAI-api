@@ -2,9 +2,11 @@ package controller
 
 import (
 	"net/http"
-	"github.com/gin-gonic/gin"
 	"resume-genAI-api/model"
 	"resume-genAI-api/useCase"
+	"strconv"
+
+	"github.com/gin-gonic/gin"
 )
 
 type SocialMediaController struct {
@@ -16,13 +18,13 @@ func NewSocialMediaController(uc *useCase.SocialMediaUseCase) *SocialMediaContro
 }
 
 func (ctrl *SocialMediaController) RegisterRoutes(r *gin.Engine) {
-	sm := r.Group("/socialmedias")
+	sm := r.Group("/socialmedias/")
 	{
-		sm.GET("/", ctrl.GetAll)
-		sm.GET(":handle", ctrl.FindByHandle)
-		sm.POST("/", ctrl.Create)
-		sm.PUT(":handle", ctrl.Update)
-		sm.DELETE(":handle", ctrl.Delete)
+		sm.GET("", ctrl.GetAll)
+		sm.GET("/:id", ctrl.FindByID)
+		sm.POST("", ctrl.Create)
+		sm.PUT("/:id", ctrl.Update)
+		sm.DELETE("/:id", ctrl.Delete)
 	}
 }
 
@@ -31,23 +33,27 @@ func (ctrl *SocialMediaController) RegisterRoutes(r *gin.Engine) {
 // @Tags socialmedias
 // @Produce json
 // @Success 200 {array} model.SocialMedia
-// @Router /socialmedias/ [get]
+// @Router /socialmedia/ [get]
 func (ctrl *SocialMediaController) GetAll(c *gin.Context) {
-	sm := ctrl.useCase.GetAll()
+	sm, err := ctrl.useCase.Get()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 	c.JSON(http.StatusOK, sm)
 }
 
-// FindByHandle godoc
-// @Summary Busca rede social por handle
+// FindByID godoc
+// @Summary Busca rede social por ID
 // @Tags socialmedias
 // @Produce json
-// @Param handle path string true "Handle da rede social"
+// @Param id path int true "ID da rede social"
 // @Success 200 {object} model.SocialMedia
 // @Failure 404 {object} model.ErrorResponse
-// @Router /socialmedias/{handle} [get]
-func (ctrl *SocialMediaController) FindByHandle(c *gin.Context) {
-	handle := c.Param("handle")
-	sm, err := ctrl.useCase.FindByHandle(handle)
+// @Router /socialmedias/{id} [get]
+func (ctrl *SocialMediaController) FindByID(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
+	sm, err := ctrl.useCase.FindByID(id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, model.ErrorResponse{Error: err.Error()})
 		return
@@ -63,7 +69,7 @@ func (ctrl *SocialMediaController) FindByHandle(c *gin.Context) {
 // @Param socialmedia body model.SocialMedia true "Rede social a ser criada"
 // @Success 201 {object} model.SocialMedia
 // @Failure 400 {object} model.ErrorResponse
-// @Router /socialmedias/ [post]
+// @Router /socialmedia/ [post]
 func (ctrl *SocialMediaController) Create(c *gin.Context) {
 	var sm model.SocialMedia
 	if err := c.ShouldBindJSON(&sm); err != nil {
@@ -83,20 +89,20 @@ func (ctrl *SocialMediaController) Create(c *gin.Context) {
 // @Tags socialmedias
 // @Accept json
 // @Produce json
-// @Param handle path string true "Handle da rede social"
+// @Param id path int true "ID da rede social"
 // @Param socialmedia body model.SocialMedia true "Rede social atualizada"
 // @Success 200 {object} model.SocialMedia
 // @Failure 400 {object} model.ErrorResponse
 // @Failure 404 {object} model.ErrorResponse
-// @Router /socialmedias/{handle} [put]
+// @Router /socialmedias/{id} [put]
 func (ctrl *SocialMediaController) Update(c *gin.Context) {
-	handle := c.Param("handle")
+	id, _ := strconv.Atoi(c.Param("id"))
 	var sm model.SocialMedia
 	if err := c.ShouldBindJSON(&sm); err != nil {
 		c.JSON(http.StatusBadRequest, model.ErrorResponse{Error: err.Error()})
 		return
 	}
-	sm.Handle = handle
+	sm.SocialMediaId = id
 	success, err := ctrl.useCase.Update(sm)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
@@ -113,13 +119,13 @@ func (ctrl *SocialMediaController) Update(c *gin.Context) {
 // @Summary Remove uma rede social
 // @Tags socialmedias
 // @Produce json
-// @Param handle path string true "Handle da rede social"
+// @Param id path int true "ID da rede social"
 // @Success 200 {object} map[string]interface{}
 // @Failure 404 {object} model.ErrorResponse
-// @Router /socialmedias/{handle} [delete]
+// @Router /socialmedias/{id} [delete]
 func (ctrl *SocialMediaController) Delete(c *gin.Context) {
-	handle := c.Param("handle")
-	success, err := ctrl.useCase.Delete(handle)
+	id, _ := strconv.Atoi(c.Param("id"))
+	success, err := ctrl.useCase.Delete(id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
 		return

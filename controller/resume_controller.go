@@ -17,11 +17,11 @@ func NewResumeController(uc *useCase.ResumeUseCase) *ResumeController {
 }
 
 func (ctrl *ResumeController) RegisterRoutes(r *gin.Engine) {
-	resumes := r.Group("/resumes")
+	resumes := r.Group("/resumes/")
 	{
-		resumes.GET("/", ctrl.GetAll)
+		resumes.GET("", ctrl.GetAll)
 		resumes.GET(":id", ctrl.FindByID)
-		resumes.POST("/", ctrl.Create)
+		resumes.POST("", ctrl.Create)
 		resumes.PUT(":id", ctrl.Update)
 		resumes.DELETE(":id", ctrl.Delete)
 	}
@@ -34,7 +34,11 @@ func (ctrl *ResumeController) RegisterRoutes(r *gin.Engine) {
 // @Success 200 {array} model.Resume
 // @Router /resumes/ [get]
 func (ctrl *ResumeController) GetAll(c *gin.Context) {
-	resumes := ctrl.useCase.GetAll()
+	resumes, err := ctrl.useCase.Get()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 	c.JSON(http.StatusOK, resumes)
 }
 

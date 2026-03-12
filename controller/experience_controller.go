@@ -17,11 +17,11 @@ func NewExperienceController(uc *useCase.ExperienceUseCase) *ExperienceControlle
 }
 
 func (ctrl *ExperienceController) RegisterRoutes(r *gin.Engine) {
-	exp := r.Group("/experiences")
+	exp := r.Group("/experiences/")
 	{
-		exp.GET("/", ctrl.GetAll)
+		exp.GET("", ctrl.GetAll)
 		exp.GET(":id", ctrl.FindByID)
-		exp.POST("/", ctrl.Create)
+		exp.POST("", ctrl.Create)
 		exp.PUT(":id", ctrl.Update)
 		exp.DELETE(":id", ctrl.Delete)
 	}
@@ -34,7 +34,11 @@ func (ctrl *ExperienceController) RegisterRoutes(r *gin.Engine) {
 // @Success 200 {array} model.Experience
 // @Router /experiences/ [get]
 func (ctrl *ExperienceController) GetAll(c *gin.Context) {
-	exp := ctrl.useCase.GetAll()
+	exp, err := ctrl.useCase.Get()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 	c.JSON(http.StatusOK, exp)
 }
 

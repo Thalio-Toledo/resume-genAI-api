@@ -1,7 +1,9 @@
 package model
 
 type SocialMedia struct {
-	Platform string `json:"platform"`
-	Handle   string `json:"handle"`
-	Link     string `json:"link"`
+	SocialMediaId int    `json:"social_media_id"`
+	ProfileId     int    `json:"profile_id"`
+	Platform      string `json:"platform"`
+	Handle        string `json:"handle"`
+	Link          string `json:"link"`
 }

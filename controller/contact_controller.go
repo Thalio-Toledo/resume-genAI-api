@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"resume-genAI-api/model"
 	"resume-genAI-api/useCase"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -17,13 +18,13 @@ func NewContactController(uc *useCase.ContactUseCase) *ContactController {
 }
 
 func (ctrl *ContactController) RegisterRoutes(r *gin.Engine) {
-	contacts := r.Group("/contacts")
+	contacts := r.Group("/contacts/")
 	{
-		contacts.GET("/", ctrl.GetAll)
-		contacts.GET(":email", ctrl.FindByEmail)
-		contacts.POST("/", ctrl.Create)
-		contacts.PUT(":email", ctrl.Update)
-		contacts.DELETE(":email", ctrl.Delete)
+		contacts.GET("", ctrl.GetAll)
+		contacts.GET(":id", ctrl.FindByID)
+		contacts.POST("", ctrl.Create)
+		contacts.PUT(":id", ctrl.Update)
+		contacts.DELETE(":id", ctrl.Delete)
 	}
 }
 
@@ -34,21 +35,25 @@ func (ctrl *ContactController) RegisterRoutes(r *gin.Engine) {
 // @Success 200 {array} model.Contact
 // @Router /contacts/ [get]
 func (ctrl *ContactController) GetAll(c *gin.Context) {
-	contacts := ctrl.useCase.GetAll()
+	contacts, err := ctrl.useCase.Get()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 	c.JSON(http.StatusOK, contacts)
 }
 
-// FindByEmail godoc
-// @Summary Busca contato por email
+// FindByID godoc
+// @Summary Busca contato por ID
 // @Tags contacts
 // @Produce json
-// @Param email path string true "Email do contato"
+// @Param id path int true "ID do contato"
 // @Success 200 {object} model.Contact
 // @Failure 404 {object} model.ErrorResponse
-// @Router /contacts/{email} [get]
-func (ctrl *ContactController) FindByEmail(c *gin.Context) {
-	email := c.Param("email")
-	contact, err := ctrl.useCase.FindByEmail(email)
+// @Router /contacts/{id} [get]
+func (ctrl *ContactController) FindByID(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
+	contact, err := ctrl.useCase.FindByID(id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, model.ErrorResponse{Error: err.Error()})
 		return
@@ -84,20 +89,20 @@ func (ctrl *ContactController) Create(c *gin.Context) {
 // @Tags contacts
 // @Accept json
 // @Produce json
-// @Param email path string true "Email do contato"
+// @Param id path int true "ID do contato"
 // @Param contact body model.Contact true "Contato atualizado"
 // @Success 200 {object} model.Contact
 // @Failure 400 {object} model.ErrorResponse
 // @Failure 404 {object} model.ErrorResponse
-// @Router /contacts/{email} [put]
+// @Router /contacts/{id} [put]
 func (ctrl *ContactController) Update(c *gin.Context) {
-	email := c.Param("email")
+	id, _ := strconv.Atoi(c.Param("id"))
 	var contact model.Contact
 	if err := c.ShouldBindJSON(&contact); err != nil {
 		c.JSON(http.StatusBadRequest, model.ErrorResponse{Error: err.Error()})
 		return
 	}
-	contact.Email = email
+	contact.ContactId = id
 	success, err := ctrl.useCase.Update(contact)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
@@ -114,13 +119,13 @@ func (ctrl *ContactController) Update(c *gin.Context) {
 // @Summary Remove um contato
 // @Tags contacts
 // @Produce json
-// @Param email path string true "Email do contato"
+// @Param id path int true "ID do contato"
 // @Success 200 {object} map[string]interface{}
 // @Failure 404 {object} model.ErrorResponse
-// @Router /contacts/{email} [delete]
+// @Router /contacts/{id} [delete]
 func (ctrl *ContactController) Delete(c *gin.Context) {
-	email := c.Param("email")
-	success, err := ctrl.useCase.Delete(email)
+	id, _ := strconv.Atoi(c.Param("id"))
+	success, err := ctrl.useCase.Delete(id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
 		return

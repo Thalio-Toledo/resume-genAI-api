@@ -13,12 +13,16 @@ func NewEducationUseCase(repo *repository.EducationRepository) *EducationUseCase
 	return &EducationUseCase{repo: repo}
 }
 
-func (uc *EducationUseCase) GetAll() []model.Education {
-	return uc.repo.GetAll()
+func (uc *EducationUseCase) Get() ([]model.Education, error) {
+	return uc.repo.Get()
 }
 
 func (uc *EducationUseCase) FindByID(id string) (*model.Education, error) {
 	return uc.repo.FindByID(id)
+}
+
+func (uc *EducationUseCase) FindByProfileID(profileID int) ([]model.Education, error) {
+	return uc.repo.FindByProfileID(profileID)
 }
 
 func (uc *EducationUseCase) Create(edu model.Education) (string, error) {

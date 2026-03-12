@@ -17,11 +17,11 @@ func NewSkillController(uc *useCase.SkillUseCase) *SkillController {
 }
 
 func (ctrl *SkillController) RegisterRoutes(r *gin.Engine) {
-	skills := r.Group("/skills")
+	skills := r.Group("/skills/")
 	{
-		skills.GET("/", ctrl.GetAll)
+		skills.GET("", ctrl.GetAll)
 		skills.GET(":id", ctrl.FindByID)
-		skills.POST("/", ctrl.Create)
+		skills.POST("", ctrl.Create)
 		skills.PUT(":id", ctrl.Update)
 		skills.DELETE(":id", ctrl.Delete)
 	}
@@ -34,7 +34,11 @@ func (ctrl *SkillController) RegisterRoutes(r *gin.Engine) {
 // @Success 200 {array} model.Skill
 // @Router /skills/ [get]
 func (ctrl *SkillController) GetAll(c *gin.Context) {
-	skills := ctrl.useCase.GetAll()
+	skills, err := ctrl.useCase.Get()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 	c.JSON(http.StatusOK, skills)
 }
 

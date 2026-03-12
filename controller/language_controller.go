@@ -17,11 +17,11 @@ func NewLanguageController(uc *useCase.LanguageUseCase) *LanguageController {
 }
 
 func (ctrl *LanguageController) RegisterRoutes(r *gin.Engine) {
-	langs := r.Group("/languages")
+	langs := r.Group("/languages/")
 	{
-		langs.GET("/", ctrl.GetAll)
+		langs.GET("", ctrl.GetAll)
 		langs.GET(":id", ctrl.FindByID)
-		langs.POST("/", ctrl.Create)
+		langs.POST("", ctrl.Create)
 		langs.PUT(":id", ctrl.Update)
 		langs.DELETE(":id", ctrl.Delete)
 	}
@@ -34,7 +34,11 @@ func (ctrl *LanguageController) RegisterRoutes(r *gin.Engine) {
 // @Success 200 {array} model.Language
 // @Router /languages/ [get]
 func (ctrl *LanguageController) GetAll(c *gin.Context) {
-	langs := ctrl.useCase.GetAll()
+	langs, err := ctrl.useCase.Get()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 	c.JSON(http.StatusOK, langs)
 }
 

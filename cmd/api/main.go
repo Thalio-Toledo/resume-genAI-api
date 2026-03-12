@@ -11,6 +11,7 @@ import (
 	"log"
 	"resume-genAI-api/controller"
 	"resume-genAI-api/database"
+	"resume-genAI-api/middleware"
 	"resume-genAI-api/repository"
 	"resume-genAI-api/useCase"
 	"time"
@@ -25,7 +26,18 @@ import (
 )
 
 func main() {
-	r := gin.Default()
+	// Usar gin.New() para controle total
+	r := gin.New()
+
+	// Desabilitar redirects automáticos de trailing slash (que removem headers CORS)
+	r.RedirectTrailingSlash = false
+
+	// Aplicar middleware CORS PRIMEIRO
+	r.Use(middleware.CORSMiddleware())
+
+	// Adicionar middlewares padrão após CORS
+	r.Use(gin.Logger())
+	r.Use(gin.Recovery())
 
 	db, err := database.Open()
 	if err != nil {
@@ -50,28 +62,33 @@ func main() {
 		})
 	})
 
+	// Handler global para OPTIONS em qualquer rota
+	r.OPTIONS("/*path", func(c *gin.Context) {
+		c.AbortWithStatus(204)
+	})
+
 	// Dependências
 	profileRepo := repository.NewProfileRepository(db)
 	profileUC := useCase.NewProfileUseCase(profileRepo)
 	profileCtrl := controller.NewProfileController(profileUC)
 
-	certificationRepo := repository.NewCertificationRepository()
+	certificationRepo := repository.NewCertificationRepository(db)
 	certificationUC := useCase.NewCertificationUseCase(certificationRepo)
 	certificationCtrl := controller.NewCertificationController(certificationUC)
 
-	contactRepo := repository.NewContactRepository()
+	contactRepo := repository.NewContactRepository(db)
 	contactUC := useCase.NewContactUseCase(contactRepo)
 	contactCtrl := controller.NewContactController(contactUC)
 
-	educationRepo := repository.NewEducationRepository()
+	educationRepo := repository.NewEducationRepository(db)
 	educationUC := useCase.NewEducationUseCase(educationRepo)
 	educationCtrl := controller.NewEducationController(educationUC)
 
-	experienceRepo := repository.NewExperienceRepository()
+	experienceRepo := repository.NewExperienceRepository(db)
 	experienceUC := useCase.NewExperienceUseCase(experienceRepo)
 	experienceCtrl := controller.NewExperienceController(experienceUC)
 
-	languageRepo := repository.NewLanguageRepository()
+	languageRepo := repository.NewLanguageRepository(db)
 	languageUC := useCase.NewLanguageUseCase(languageRepo)
 	languageCtrl := controller.NewLanguageController(languageUC)
 
@@ -79,15 +96,15 @@ func main() {
 	projectUC := useCase.NewProjectUseCase(projectRepo)
 	projectCtrl := controller.NewProjectController(projectUC)
 
-	resumeRepo := repository.NewResumeRepository()
+	resumeRepo := repository.NewResumeRepository(db)
 	resumeUC := useCase.NewResumeUseCase(resumeRepo)
 	resumeCtrl := controller.NewResumeController(resumeUC)
 
-	skillRepo := repository.NewSkillRepository()
+	skillRepo := repository.NewSkillRepository(db)
 	skillUC := useCase.NewSkillUseCase(skillRepo)
 	skillCtrl := controller.NewSkillController(skillUC)
 
-	socialMediaRepo := repository.NewSocialMediaRepository()
+	socialMediaRepo := repository.NewSocialMediaRepository(db)
 	socialMediaUC := useCase.NewSocialMediaUseCase(socialMediaRepo)
 	socialMediaCtrl := controller.NewSocialMediaController(socialMediaUC)
 

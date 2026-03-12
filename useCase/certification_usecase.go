@@ -13,12 +13,16 @@ func NewCertificationUseCase(repo *repository.CertificationRepository) *Certific
 	return &CertificationUseCase{repo: repo}
 }
 
-func (uc *CertificationUseCase) GetAll() ([]model.Certification, error) {
-	return uc.repo.GetAll()
+func (uc *CertificationUseCase) Get() ([]model.Certification, error) {
+	return uc.repo.Get()
 }
 
 func (uc *CertificationUseCase) FindByID(id int) (*model.Certification, error) {
 	return uc.repo.FindByID(id)
+}
+
+func (uc *CertificationUseCase) FindByProfileID(profileID int) ([]model.Certification, error) {
+	return uc.repo.FindByProfileID(profileID)
 }
 
 func (uc *CertificationUseCase) Create(cert model.Certification) (int, error) {

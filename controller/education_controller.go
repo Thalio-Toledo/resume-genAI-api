@@ -17,11 +17,11 @@ func NewEducationController(uc *useCase.EducationUseCase) *EducationController {
 }
 
 func (ctrl *EducationController) RegisterRoutes(r *gin.Engine) {
-	edu := r.Group("/educations")
+	edu := r.Group("/educations/")
 	{
-		edu.GET("/", ctrl.GetAll)
+		edu.GET("", ctrl.GetAll)
 		edu.GET(":id", ctrl.FindByID)
-		edu.POST("/", ctrl.Create)
+		edu.POST("", ctrl.Create)
 		edu.PUT(":id", ctrl.Update)
 		edu.DELETE(":id", ctrl.Delete)
 	}
@@ -34,7 +34,11 @@ func (ctrl *EducationController) RegisterRoutes(r *gin.Engine) {
 // @Success 200 {array} model.Education
 // @Router /educations/ [get]
 func (ctrl *EducationController) GetAll(c *gin.Context) {
-	edu := ctrl.useCase.GetAll()
+	edu, err := ctrl.useCase.Get()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 	c.JSON(http.StatusOK, edu)
 }
 

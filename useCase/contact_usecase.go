@@ -13,15 +13,19 @@ func NewContactUseCase(repo *repository.ContactRepository) *ContactUseCase {
 	return &ContactUseCase{repo: repo}
 }
 
-func (uc *ContactUseCase) GetAll() []model.Contact {
-	return uc.repo.GetAll()
+func (uc *ContactUseCase) Get() ([]model.Contact, error) {
+	return uc.repo.Get()
 }
 
-func (uc *ContactUseCase) FindByEmail(email string) (*model.Contact, error) {
-	return uc.repo.FindByEmail(email)
+func (uc *ContactUseCase) FindByID(id int) (*model.Contact, error) {
+	return uc.repo.FindByID(id)
 }
 
-func (uc *ContactUseCase) Create(contact model.Contact) (string, error) {
+func (uc *ContactUseCase) FindByProfileID(profileID int) ([]model.Contact, error) {
+	return uc.repo.FindByProfileID(profileID)
+}
+
+func (uc *ContactUseCase) Create(contact model.Contact) (int, error) {
 	return uc.repo.Create(contact)
 }
 
@@ -29,6 +33,6 @@ func (uc *ContactUseCase) Update(contact model.Contact) (bool, error) {
 	return uc.repo.Update(contact)
 }
 
-func (uc *ContactUseCase) Delete(email string) (bool, error) {
-	return uc.repo.Delete(email)
+func (uc *ContactUseCase) Delete(id int) (bool, error) {
+	return uc.repo.Delete(id)
 }

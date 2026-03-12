@@ -19,12 +19,12 @@ func NewProfileController(uc *useCase.ProfileUseCase) *ProfileController {
 }
 
 func (ctrl *ProfileController) RegisterRoutes(r *gin.Engine) {
-	profiles := r.Group("/profiles")
+	profiles := r.Group("/profiles/")
 	{
-		profiles.GET("/", ctrl.Get)
+		profiles.GET("", ctrl.Get)
 		profiles.GET(":id", ctrl.FindByID)
-		profiles.POST("/", ctrl.Create)
-		profiles.PUT(":id", ctrl.Update)
+		profiles.POST("", ctrl.Create)
+		profiles.PUT("", ctrl.Update)
 		profiles.DELETE(":id", ctrl.Delete)
 	}
 }
@@ -111,17 +111,11 @@ func (ctrl *ProfileController) Create(c *gin.Context) {
 // @Failure 404 {object} model.ErrorResponse
 // @Router /profiles/{id} [put]
 func (ctrl *ProfileController) Update(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
-		return
-	}
 	var profile model.Profile
 	if err := c.ShouldBindJSON(&profile); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	profile.ProfileId = id
 	success, err := ctrl.useCase.Update(profile)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

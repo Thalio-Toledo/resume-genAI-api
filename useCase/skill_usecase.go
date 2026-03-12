@@ -13,12 +13,16 @@ func NewSkillUseCase(repo *repository.SkillRepository) *SkillUseCase {
 	return &SkillUseCase{repo: repo}
 }
 
-func (uc *SkillUseCase) GetAll() []model.Skill {
-	return uc.repo.GetAll()
+func (uc *SkillUseCase) Get() ([]model.Skill, error) {
+	return uc.repo.Get()
 }
 
 func (uc *SkillUseCase) FindByID(id string) (*model.Skill, error) {
 	return uc.repo.FindByID(id)
+}
+
+func (uc *SkillUseCase) FindByProfileID(profileID int) ([]model.Skill, error) {
+	return uc.repo.FindByProfileID(profileID)
 }
 
 func (uc *SkillUseCase) Create(skill model.Skill) (string, error) {

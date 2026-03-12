@@ -18,11 +18,11 @@ func NewCertificationController(uc *useCase.CertificationUseCase) *Certification
 }
 
 func (ctrl *CertificationController) RegisterRoutes(r *gin.Engine) {
-	certs := r.Group("/certifications")
+	certs := r.Group("/certifications/")
 	{
-		certs.GET("/", ctrl.GetAll)
+		certs.GET("", ctrl.GetAll)
 		certs.GET(":id", ctrl.FindByID)
-		certs.POST("/", ctrl.Create)
+		certs.POST("", ctrl.Create)
 		certs.PUT(":id", ctrl.Update)
 		certs.DELETE(":id", ctrl.Delete)
 	}
@@ -35,7 +35,7 @@ func (ctrl *CertificationController) RegisterRoutes(r *gin.Engine) {
 // @Success 200 {array} model.Certification
 // @Router /certifications/ [get]
 func (ctrl *CertificationController) GetAll(c *gin.Context) {
-	certs, err := ctrl.useCase.GetAll()
+	certs, err := ctrl.useCase.Get()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

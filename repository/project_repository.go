@@ -27,7 +27,7 @@ func (r *ProjectRepository) GetAll() ([]model.Project, error) {
 				,description
 				,link
 				,active
- 			FROM projects
+ 			FROM project
 	`
 
 	rows, err := r.db.Query(query)
@@ -43,6 +43,7 @@ func (r *ProjectRepository) GetAll() ([]model.Project, error) {
 
 		err := rows.Scan(
 			&project.ProjectId,
+			&project.ProfileID,
 			&project.Name,
 			&project.Description,
 			&project.Link,
@@ -65,11 +66,12 @@ func (r *ProjectRepository) FindByProfileID(profileID string) ([]model.Project, 
 	query := `
 		SELECT
 			 project_id
+			,profile_id
 			,name
 			,description
 			,link
 			,active
-		FROM projects 
+		FROM project 
 		WHERE profile_id = @profile_id
 	`
 
@@ -112,7 +114,7 @@ func (r *ProjectRepository) FindByID(id string) (*model.Project, error) {
 			,description
 			,link
 			,active
-		FROM projects 
+		FROM project 
 		WHERE project_id = @id
 	`
 
@@ -133,26 +135,95 @@ func (r *ProjectRepository) FindByID(id string) (*model.Project, error) {
 }
 
 func (r *ProjectRepository) Create(proj model.Project) (string, error) {
-	r.projects = append(r.projects, proj)
-	return proj.ProjectId, nil
+	query := `
+		INSERT INTO project (
+			profile_id,
+			name,
+			description,
+			link,
+			active
+		)
+		OUTPUT INSERTED.project_id
+		VALUES (
+			@profile_id,
+			@name,
+			@description,
+			@link,
+			@active
+		)
+	`
+
+	var id string
+
+	err := r.db.QueryRow(
+		query,
+		sql.Named("profile_id", proj.ProfileID),
+		sql.Named("name", proj.Name),
+		sql.Named("description", proj.Description),
+		sql.Named("link", proj.Link),
+		sql.Named("active", proj.Active),
+	).Scan(&id)
+
+	if err != nil {
+		return "", err
+	}
+
+	return id, nil
 }
 
 func (r *ProjectRepository) Update(proj model.Project) (bool, error) {
-	for i, p := range r.projects {
-		if p.ProjectId == proj.ProjectId {
-			r.projects[i] = proj
-			return true, nil
-		}
+	query := `
+		UPDATE project
+		SET
+			name = @name,
+			description = @description,
+			link = @link,
+			active = @active
+		WHERE project_id = @id
+	`
+
+	result, err := r.db.Exec(
+		query,
+		sql.Named("id", proj.ProjectId),
+		sql.Named("name", proj.Name),
+		sql.Named("description", proj.Description),
+		sql.Named("link", proj.Link),
+		sql.Named("active", proj.Active),
+	)
+	if err != nil {
+		return false, err
 	}
-	return false, errors.New("Project not found")
+
+	rows, err := result.RowsAffected()
+	if err != nil {
+		return false, err
+	}
+
+	if rows == 0 {
+		return false, sql.ErrNoRows
+	}
+
+	return true, nil
 }
 
 func (r *ProjectRepository) Delete(id string) (bool, error) {
-	for i, p := range r.projects {
-		if p.ProjectId == id {
-			r.projects = append(r.projects[:i], r.projects[i+1:]...)
-			return true, nil
-		}
+	query := `
+		DELETE project
+		WHERE project_id = @id
+	`
+	result, err := r.db.Exec(query, sql.Named("id", id))
+
+	if err != nil {
+		return false, err
 	}
-	return false, errors.New("Project not found")
+
+	rows, err := result.RowsAffected()
+	if err != nil {
+		return false, err
+	}
+
+	if rows == 0 {
+		return false, errors.New("no rows affected")
+	}
+	return true, nil
 }
