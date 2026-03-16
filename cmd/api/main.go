@@ -8,15 +8,18 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"resume-genAI-api/controller"
 	"resume-genAI-api/database"
 	"resume-genAI-api/middleware"
 	"resume-genAI-api/repository"
 	"resume-genAI-api/useCase"
+	"strings"
 	"time"
 
 	// Importa o pacote docs gerado pelo swag para registrar a documentação Swagger
+	ai "resume-genAI-api/cmd/api/AI"
 	_ "resume-genAI-api/cmd/api/docs"
 
 	"github.com/gin-gonic/gin"
@@ -26,8 +29,19 @@ import (
 )
 
 func main() {
-	// ai.Generate("Diga Olá e fale seu nome")
+	skills, err := ai.Generate(`Requisitos da vaga Hard skills: 
+					C#, .NET 6/7, ASP.NET Core e gRPC;
+					RabbitMQ e Kafka;
+					SQL Server, PostgreSQL e Redis;
+					Angular 15+, TypeScript e RxJS;
+					Material Design e Bootstrap;
+					Azure, Docker e Kubernetes;
+					Swagger/OpenAPI, Postman e Git;
+					GitHub Actions;
+					Experiência com IA e produtos financeiros.`)
 	//ai.GenerateEmbedding("C#")
+
+	fmt.Println(strings.Join(skills, ", "))
 
 	// Usar gin.New() para controle total
 	r := gin.New()
