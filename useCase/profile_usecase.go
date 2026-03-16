@@ -1,6 +1,9 @@
 package useCase
 
 import (
+	"fmt"
+	ai "resume-genAI-api/cmd/api/AI"
+	skillMatch "resume-genAI-api/cmd/api/utils"
 	"resume-genAI-api/model"
 	"resume-genAI-api/repository"
 )
@@ -27,6 +30,21 @@ func (uc *ProfileUseCase) FindByID(id int) (*model.Profile, error) {
 	uc.repo.LoadSkill(profile)
 	uc.repo.LoadLanguages(profile)
 	uc.repo.LoadSocialMedia(profile)
+
+	vagaEmbedding, _ := ai.GenerateEmbedding("angularjs")
+
+	var skills []model.Skill
+
+	for _, skill := range profile.Skills {
+		score := skillMatch.CosineSimilarity(vagaEmbedding, skill.Embeddings)
+
+		if score >= 0.75 {
+			skills = append(skills, skill)
+			fmt.Printf("MATCH: %s (%.2f)\n", skill.Name, score)
+		}
+	}
+
+	profile.Skills = skills
 	return profile, nil
 }
 

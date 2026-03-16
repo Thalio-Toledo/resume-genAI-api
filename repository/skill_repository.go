@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"resume-genAI-api/model"
 )
@@ -24,7 +25,8 @@ func (r *SkillRepository) Get() ([]model.Skill, error) {
 			skill_id,
 			profile_id,
 			name,
-			level
+			level,
+			embeddingsJSON
 		FROM skill
 	`
 	rows, err := r.db.Query(query)
@@ -43,9 +45,17 @@ func (r *SkillRepository) Get() ([]model.Skill, error) {
 			&skill.ProfileID,
 			&skill.Name,
 			&skill.Level,
+			&skill.EmbeddingsJSON,
 		)
 		if err != nil {
 			return nil, err
+		}
+
+		if skill.EmbeddingsJSON.Valid {
+			err = json.Unmarshal([]byte(skill.EmbeddingsJSON.String), &skill.Embeddings)
+			if err != nil {
+				return nil, err
+			}
 		}
 
 		skills = append(skills, skill)
@@ -64,7 +74,8 @@ func (r *SkillRepository) FindByID(id string) (*model.Skill, error) {
 			skill_id,
 			profile_id,
 			name,
-			level
+			level,
+			embeddingsJSON
 		FROM skill
 		WHERE skill_id = @id
 	`
@@ -75,9 +86,17 @@ func (r *SkillRepository) FindByID(id string) (*model.Skill, error) {
 		&skill.ProfileID,
 		&skill.Name,
 		&skill.Level,
+		&skill.EmbeddingsJSON,
 	)
 	if err != nil {
 		return nil, err
+	}
+
+	if skill.EmbeddingsJSON.Valid {
+		err = json.Unmarshal([]byte(skill.EmbeddingsJSON.String), &skill.Embeddings)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return &skill, nil
@@ -89,7 +108,8 @@ func (r *SkillRepository) FindByProfileID(profileID int) ([]model.Skill, error) 
 			skill_id,
 			profile_id,
 			name,
-			level
+			level,
+			embeddingsJSON
 		FROM skill
 		WHERE profile_id = @profile_id
 	`
@@ -109,9 +129,17 @@ func (r *SkillRepository) FindByProfileID(profileID int) ([]model.Skill, error) 
 			&skill.ProfileID,
 			&skill.Name,
 			&skill.Level,
+			&skill.EmbeddingsJSON,
 		)
 		if err != nil {
 			return nil, err
+		}
+
+		if skill.EmbeddingsJSON.Valid {
+			err = json.Unmarshal([]byte(skill.EmbeddingsJSON.String), &skill.Embeddings)
+			if err != nil {
+				return nil, err
+			}
 		}
 
 		skills = append(skills, skill)
@@ -124,18 +152,21 @@ func (r *SkillRepository) FindByProfileID(profileID int) ([]model.Skill, error) 
 	return skills, nil
 }
 
-func (r *SkillRepository) Create(skill model.Skill) (string, error) {
+func (r *SkillRepository) Create(skill model.Skill, embeddings []float32) (string, error) {
+	embeddingJSON, _ := json.Marshal(embeddings)
 	query := `
 		INSERT INTO skill (
 			profile_id,
 			name,
-			level
+			level,
+			embeddingsJSON
 		)
 		OUTPUT INSERTED.skill_id
 		VALUES (
 			@profile_id,
 			@name,
-			@level
+			@level,
+			@embeddingsJSON
 		)
 	`
 
@@ -146,6 +177,7 @@ func (r *SkillRepository) Create(skill model.Skill) (string, error) {
 		sql.Named("profile_id", skill.ProfileID),
 		sql.Named("name", skill.Name),
 		sql.Named("level", skill.Level),
+		sql.Named("embeddingsJSON", string(embeddingJSON)),
 	).Scan(&id)
 
 	if err != nil {

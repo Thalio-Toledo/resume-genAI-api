@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"resume-genAI-api/model"
 )
@@ -369,6 +370,7 @@ func (p *ProfileRepository) LoadSkill(profile *model.Profile) error {
 			,profile_id
 			,name
 			,level
+			,embeddingsJSON
   		FROM skill
 		WHERE profile_id = @profile_id
 	`
@@ -388,9 +390,17 @@ func (p *ProfileRepository) LoadSkill(profile *model.Profile) error {
 			&skill.ProfileID,
 			&skill.Name,
 			&skill.Level,
+			&skill.EmbeddingsJSON,
 		)
 		if err != nil {
 			return err
+		}
+
+		if skill.EmbeddingsJSON.Valid {
+			err = json.Unmarshal([]byte(skill.EmbeddingsJSON.String), &skill.Embeddings)
+			if err != nil {
+				return err
+			}
 		}
 
 		skills = append(skills, skill)

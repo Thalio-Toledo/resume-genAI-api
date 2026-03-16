@@ -1,6 +1,7 @@
 package useCase
 
 import (
+	ai "resume-genAI-api/cmd/api/AI"
 	"resume-genAI-api/model"
 	"resume-genAI-api/repository"
 )
@@ -26,7 +27,8 @@ func (uc *SkillUseCase) FindByProfileID(profileID int) ([]model.Skill, error) {
 }
 
 func (uc *SkillUseCase) Create(skill model.Skill) (string, error) {
-	return uc.repo.Create(skill)
+	embeddings, _ := ai.GenerateEmbedding(skill.Name)
+	return uc.repo.Create(skill, embeddings)
 }
 
 func (uc *SkillUseCase) Update(skill model.Skill) (bool, error) {

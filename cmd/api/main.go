@@ -26,6 +26,9 @@ import (
 )
 
 func main() {
+	// ai.Generate("Diga Olá e fale seu nome")
+	//ai.GenerateEmbedding("C#")
+
 	// Usar gin.New() para controle total
 	r := gin.New()
 

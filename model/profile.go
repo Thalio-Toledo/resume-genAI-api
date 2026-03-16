@@ -15,7 +15,7 @@ type Profile struct {
 	Projects       []Project       `json:"projects"`
 	Certifications []Certification `json:"certifications"`
 	Contacts       []Contact       `json:"contacts"`
-	SocialMedias   []SocialMedia   `json:"social_medias"`
+	SocialMedias   []SocialMedia   `json:"socialMedias"`
 	Educations     []Education     `json:"educations"`
 	Experiences    []Experience    `json:"experiences"`
 	Skills         []Skill         `json:"skills"`
