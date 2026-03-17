@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"resume-genAI-api/dto"
 	"resume-genAI-api/model"
 	"resume-genAI-api/useCase"
 
@@ -24,6 +25,7 @@ func (ctrl *ProfileController) RegisterRoutes(r *gin.Engine) {
 		profiles.GET("", ctrl.Get)
 		profiles.GET(":id", ctrl.FindByID)
 		profiles.POST("", ctrl.Create)
+		profiles.POST("/generate", ctrl.Generate)
 		profiles.PUT("", ctrl.Update)
 		profiles.DELETE(":id", ctrl.Delete)
 	}
@@ -95,6 +97,31 @@ func (ctrl *ProfileController) Create(c *gin.Context) {
 		return
 	}
 	profile.ProfileId = id
+	c.JSON(http.StatusCreated, profile)
+}
+
+// Generate godoc
+// @Summary Generate a new resume using LLMs
+// @Description Generate a new resume based on job description
+// @Tags profiles
+// @Accept json
+// @Produce json
+// @Param profile body dto.RoleDescription true "Resume generated"
+// @Success 201 {object} dto.RoleDescription
+// @Failure 400 {object} model.ErrorResponse
+// @Router /profiles/ [post]
+func (ctrl *ProfileController) Generate(c *gin.Context) {
+
+	var job_description dto.RoleDescription
+	if err := c.ShouldBindJSON(&job_description); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	profile, err := ctrl.useCase.FindByID(job_description.ProfileId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
 	c.JSON(http.StatusCreated, profile)
 }
 
