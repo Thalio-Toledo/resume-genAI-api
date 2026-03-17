@@ -9,15 +9,15 @@ package main
 import (
 	"context"
 	"log"
-	"resume-genAI-api/controller"
-	"resume-genAI-api/database"
-	"resume-genAI-api/middleware"
-	"resume-genAI-api/repository"
-	"resume-genAI-api/useCase"
+	"resume-genAI-api/cmd/api/database"
+	"resume-genAI-api/cmd/api/middleware"
+	"resume-genAI-api/cmd/api/repository"
+	"resume-genAI-api/cmd/api/useCase"
 	"time"
 
 	// Importa o pacote docs gerado pelo swag para registrar a documentação Swagger
 
+	"resume-genAI-api/cmd/api/controller"
 	_ "resume-genAI-api/cmd/api/docs"
 
 	"github.com/gin-gonic/gin"
