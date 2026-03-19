@@ -29,11 +29,12 @@ func (ctrl *SocialMediaController) RegisterRoutes(r *gin.Engine) {
 }
 
 // GetAll godoc
-// @Summary Lista todas as redes sociais
-// @Tags socialmedias
-// @Produce json
-// @Success 200 {array} model.SocialMedia
-// @Router /socialmedia/ [get]
+//
+//	@Summary	Lista todas as redes sociais
+//	@Tags		socialmedias
+//	@Produce	json
+//	@Success	200	{array}	model.SocialMedia
+//	@Router		/socialmedia/ [get]
 func (ctrl *SocialMediaController) GetAll(c *gin.Context) {
 	sm, err := ctrl.useCase.Get()
 	if err != nil {
@@ -44,13 +45,14 @@ func (ctrl *SocialMediaController) GetAll(c *gin.Context) {
 }
 
 // FindByID godoc
-// @Summary Busca rede social por ID
-// @Tags socialmedias
-// @Produce json
-// @Param id path int true "ID da rede social"
-// @Success 200 {object} model.SocialMedia
-// @Failure 404 {object} model.ErrorResponse
-// @Router /socialmedias/{id} [get]
+//
+//	@Summary	Busca rede social por ID
+//	@Tags		socialmedias
+//	@Produce	json
+//	@Param		id	path		int	true	"ID da rede social"
+//	@Success	200	{object}	model.SocialMedia
+//	@Failure	404	{object}	model.ErrorResponse
+//	@Router		/socialmedias/{id} [get]
 func (ctrl *SocialMediaController) FindByID(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 	sm, err := ctrl.useCase.FindByID(id)
@@ -62,14 +64,15 @@ func (ctrl *SocialMediaController) FindByID(c *gin.Context) {
 }
 
 // Create godoc
-// @Summary Cria uma nova rede social
-// @Tags socialmedias
-// @Accept json
-// @Produce json
-// @Param socialmedia body model.SocialMedia true "Rede social a ser criada"
-// @Success 201 {object} model.SocialMedia
-// @Failure 400 {object} model.ErrorResponse
-// @Router /socialmedia/ [post]
+//
+//	@Summary	Cria uma nova rede social
+//	@Tags		socialmedias
+//	@Accept		json
+//	@Produce	json
+//	@Param		socialmedia	body		model.SocialMedia	true	"Rede social a ser criada"
+//	@Success	201			{object}	model.SocialMedia
+//	@Failure	400			{object}	model.ErrorResponse
+//	@Router		/socialmedia/ [post]
 func (ctrl *SocialMediaController) Create(c *gin.Context) {
 	var sm model.SocialMedia
 	if err := c.ShouldBindJSON(&sm); err != nil {
@@ -85,16 +88,17 @@ func (ctrl *SocialMediaController) Create(c *gin.Context) {
 }
 
 // Update godoc
-// @Summary Atualiza uma rede social
-// @Tags socialmedias
-// @Accept json
-// @Produce json
-// @Param id path int true "ID da rede social"
-// @Param socialmedia body model.SocialMedia true "Rede social atualizada"
-// @Success 200 {object} model.SocialMedia
-// @Failure 400 {object} model.ErrorResponse
-// @Failure 404 {object} model.ErrorResponse
-// @Router /socialmedias/{id} [put]
+//
+//	@Summary	Atualiza uma rede social
+//	@Tags		socialmedias
+//	@Accept		json
+//	@Produce	json
+//	@Param		id			path		int					true	"ID da rede social"
+//	@Param		socialmedia	body		model.SocialMedia	true	"Rede social atualizada"
+//	@Success	200			{object}	model.SocialMedia
+//	@Failure	400			{object}	model.ErrorResponse
+//	@Failure	404			{object}	model.ErrorResponse
+//	@Router		/socialmedias/{id} [put]
 func (ctrl *SocialMediaController) Update(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 	var sm model.SocialMedia
@@ -116,13 +120,14 @@ func (ctrl *SocialMediaController) Update(c *gin.Context) {
 }
 
 // Delete godoc
-// @Summary Remove uma rede social
-// @Tags socialmedias
-// @Produce json
-// @Param id path int true "ID da rede social"
-// @Success 200 {object} map[string]interface{}
-// @Failure 404 {object} model.ErrorResponse
-// @Router /socialmedias/{id} [delete]
+//
+//	@Summary	Remove uma rede social
+//	@Tags		socialmedias
+//	@Produce	json
+//	@Param		id	path		int	true	"ID da rede social"
+//	@Success	200	{object}	map[string]interface{}
+//	@Failure	404	{object}	model.ErrorResponse
+//	@Router		/socialmedias/{id} [delete]
 func (ctrl *SocialMediaController) Delete(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 	success, err := ctrl.useCase.Delete(id)

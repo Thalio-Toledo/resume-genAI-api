@@ -28,11 +28,12 @@ func (ctrl *EducationController) RegisterRoutes(r *gin.Engine) {
 }
 
 // GetAll godoc
-// @Summary Lista todas as formações
-// @Tags educations
-// @Produce json
-// @Success 200 {array} model.Education
-// @Router /educations/ [get]
+//
+//	@Summary	Lista todas as formações
+//	@Tags		educations
+//	@Produce	json
+//	@Success	200	{array}	model.Education
+//	@Router		/educations/ [get]
 func (ctrl *EducationController) GetAll(c *gin.Context) {
 	edu, err := ctrl.useCase.Get()
 	if err != nil {
@@ -43,13 +44,14 @@ func (ctrl *EducationController) GetAll(c *gin.Context) {
 }
 
 // FindByID godoc
-// @Summary Busca formação por ID
-// @Tags educations
-// @Produce json
-// @Param id path string true "ID da formação"
-// @Success 200 {object} model.Education
-// @Failure 404 {object} model.ErrorResponse
-// @Router /educations/{id} [get]
+//
+//	@Summary	Busca formação por ID
+//	@Tags		educations
+//	@Produce	json
+//	@Param		id	path		string	true	"ID da formação"
+//	@Success	200	{object}	model.Education
+//	@Failure	404	{object}	model.ErrorResponse
+//	@Router		/educations/{id} [get]
 func (ctrl *EducationController) FindByID(c *gin.Context) {
 	id := c.Param("id")
 	edu, err := ctrl.useCase.FindByID(id)
@@ -61,14 +63,15 @@ func (ctrl *EducationController) FindByID(c *gin.Context) {
 }
 
 // Create godoc
-// @Summary Cria uma nova formação
-// @Tags educations
-// @Accept json
-// @Produce json
-// @Param education body model.Education true "Formação a ser criada"
-// @Success 201 {object} model.Education
-// @Failure 400 {object} model.ErrorResponse
-// @Router /educations/ [post]
+//
+//	@Summary	Cria uma nova formação
+//	@Tags		educations
+//	@Accept		json
+//	@Produce	json
+//	@Param		education	body		model.Education	true	"Formação a ser criada"
+//	@Success	201			{object}	model.Education
+//	@Failure	400			{object}	model.ErrorResponse
+//	@Router		/educations/ [post]
 func (ctrl *EducationController) Create(c *gin.Context) {
 	var edu model.Education
 	if err := c.ShouldBindJSON(&edu); err != nil {
@@ -84,16 +87,17 @@ func (ctrl *EducationController) Create(c *gin.Context) {
 }
 
 // Update godoc
-// @Summary Atualiza uma formação
-// @Tags educations
-// @Accept json
-// @Produce json
-// @Param id path string true "ID da formação"
-// @Param education body model.Education true "Formação atualizada"
-// @Success 200 {object} model.Education
-// @Failure 400 {object} model.ErrorResponse
-// @Failure 404 {object} model.ErrorResponse
-// @Router /educations/{id} [put]
+//
+//	@Summary	Atualiza uma formação
+//	@Tags		educations
+//	@Accept		json
+//	@Produce	json
+//	@Param		id			path		string			true	"ID da formação"
+//	@Param		education	body		model.Education	true	"Formação atualizada"
+//	@Success	200			{object}	model.Education
+//	@Failure	400			{object}	model.ErrorResponse
+//	@Failure	404			{object}	model.ErrorResponse
+//	@Router		/educations/{id} [put]
 func (ctrl *EducationController) Update(c *gin.Context) {
 	id := c.Param("id")
 	var edu model.Education
@@ -115,13 +119,14 @@ func (ctrl *EducationController) Update(c *gin.Context) {
 }
 
 // Delete godoc
-// @Summary Remove uma formação
-// @Tags educations
-// @Produce json
-// @Param id path string true "ID da formação"
-// @Success 200 {object} map[string]interface{}
-// @Failure 404 {object} model.ErrorResponse
-// @Router /educations/{id} [delete]
+//
+//	@Summary	Remove uma formação
+//	@Tags		educations
+//	@Produce	json
+//	@Param		id	path		string	true	"ID da formação"
+//	@Success	200	{object}	map[string]interface{}
+//	@Failure	404	{object}	model.ErrorResponse
+//	@Router		/educations/{id} [delete]
 func (ctrl *EducationController) Delete(c *gin.Context) {
 	id := c.Param("id")
 	success, err := ctrl.useCase.Delete(id)

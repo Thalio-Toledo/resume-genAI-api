@@ -1,9 +1,10 @@
 // O import abaixo referencia o pacote docs gerado pelo swag, localizado em cmd/api/docs
-// @title Resume GenAI API
-// @version 1.0
-// @description API para gerenciamento de perfis e currículos com IA.
-// @host localhost:8080
-// @BasePath /
+//
+//	@title			Resume GenAI API
+//	@version		1.0
+//	@description	API para gerenciamento de perfis e currículos com IA.
+//	@host			localhost:8080
+//	@BasePath		/
 package main
 
 import (

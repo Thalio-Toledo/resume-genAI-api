@@ -250,7 +250,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/contacts/{email}": {
+        "/contacts/{id}": {
             "get": {
                 "produces": [
                     "application/json"
@@ -258,12 +258,12 @@ const docTemplate = `{
                 "tags": [
                     "contacts"
                 ],
-                "summary": "Busca contato por email",
+                "summary": "Busca contato por ID",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "Email do contato",
-                        "name": "email",
+                        "type": "integer",
+                        "description": "ID do contato",
+                        "name": "id",
                         "in": "path",
                         "required": true
                     }
@@ -296,9 +296,9 @@ const docTemplate = `{
                 "summary": "Atualiza um contato",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "Email do contato",
-                        "name": "email",
+                        "type": "integer",
+                        "description": "ID do contato",
+                        "name": "id",
                         "in": "path",
                         "required": true
                     },
@@ -343,9 +343,9 @@ const docTemplate = `{
                 "summary": "Remove um contato",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "Email do contato",
-                        "name": "email",
+                        "type": "integer",
+                        "description": "ID do contato",
+                        "name": "id",
                         "in": "path",
                         "required": true
                     }
@@ -911,7 +911,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/model.Profile"
+                                "$ref": "#/definitions/model.ProfileDTO"
                             }
                         }
                     }
@@ -936,7 +936,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.Profile"
+                            "$ref": "#/definitions/model.ProfileDTO"
                         }
                     }
                 ],
@@ -944,7 +944,47 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/model.Profile"
+                            "$ref": "#/definitions/model.ProfileDTO"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/profiles/generate": {
+            "post": {
+                "description": "Gera um novo perfil usando LLMs com base na descrição da vaga",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "profiles"
+                ],
+                "summary": "Gera um novo perfil baseado na descrição de vaga",
+                "parameters": [
+                    {
+                        "description": "Descrição da vaga",
+                        "name": "roleDescription",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.RoleDescription"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/model.ProfileDTO"
                         }
                     },
                     "400": {
@@ -979,7 +1019,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.Profile"
+                            "$ref": "#/definitions/model.ProfileDTO"
                         }
                     },
                     "400": {
@@ -1022,7 +1062,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.Profile"
+                            "$ref": "#/definitions/model.ProfileDTO"
                         }
                     }
                 ],
@@ -1030,7 +1070,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.Profile"
+                            "$ref": "#/definitions/model.ProfileDTO"
                         }
                     },
                     "400": {
@@ -1455,7 +1495,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/model.Skill"
+                                "$ref": "#/definitions/model.SkillDTO"
                             }
                         }
                     }
@@ -1479,7 +1519,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.Skill"
+                            "$ref": "#/definitions/model.SkillDTO"
                         }
                     }
                 ],
@@ -1487,7 +1527,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/model.Skill"
+                            "$ref": "#/definitions/model.SkillDTO"
                         }
                     },
                     "400": {
@@ -1521,7 +1561,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.Skill"
+                            "$ref": "#/definitions/model.SkillDTO"
                         }
                     },
                     "404": {
@@ -1557,7 +1597,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.Skill"
+                            "$ref": "#/definitions/model.SkillDTO"
                         }
                     }
                 ],
@@ -1565,7 +1605,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.Skill"
+                            "$ref": "#/definitions/model.SkillDTO"
                         }
                     },
                     "400": {
@@ -1615,16 +1655,203 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/socialmedia/": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "socialmedias"
+                ],
+                "summary": "Lista todas as redes sociais",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.SocialMedia"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "socialmedias"
+                ],
+                "summary": "Cria uma nova rede social",
+                "parameters": [
+                    {
+                        "description": "Rede social a ser criada",
+                        "name": "socialmedia",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.SocialMedia"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/model.SocialMedia"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/socialmedias/{id}": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "socialmedias"
+                ],
+                "summary": "Busca rede social por ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da rede social",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.SocialMedia"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/model.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "socialmedias"
+                ],
+                "summary": "Atualiza uma rede social",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da rede social",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Rede social atualizada",
+                        "name": "socialmedia",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.SocialMedia"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.SocialMedia"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/model.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/model.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "socialmedias"
+                ],
+                "summary": "Remove uma rede social",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "ID da rede social",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": true
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/model.ErrorResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
+        "dto.RoleDescription": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "profile_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "model.Certification": {
             "type": "object",
             "properties": {
-                "date_issued": {
-                    "type": "string"
+                "certification_id": {
+                    "type": "integer"
                 },
-                "id": {
+                "date_issued": {
                     "type": "string"
                 },
                 "issuer": {
@@ -1632,17 +1859,26 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                },
+                "profile_id": {
+                    "type": "integer"
                 }
             }
         },
         "model.Contact": {
             "type": "object",
             "properties": {
+                "contact_id": {
+                    "type": "integer"
+                },
                 "email": {
                     "type": "string"
                 },
                 "phone_number": {
                     "type": "string"
+                },
+                "profile_id": {
+                    "type": "integer"
                 }
             }
         },
@@ -1652,17 +1888,20 @@ const docTemplate = `{
                 "degree": {
                     "type": "string"
                 },
+                "education_id": {
+                    "type": "string"
+                },
                 "end_date": {
                     "type": "string"
                 },
                 "field": {
                     "type": "string"
                 },
-                "id": {
-                    "type": "string"
-                },
                 "institution": {
                     "type": "string"
+                },
+                "profile_id": {
+                    "type": "integer"
                 },
                 "start_date": {
                     "type": "string"
@@ -1689,11 +1928,14 @@ const docTemplate = `{
                 "end_date": {
                     "type": "string"
                 },
-                "id": {
+                "experience_id": {
                     "type": "string"
                 },
                 "is_current": {
                     "type": "boolean"
+                },
+                "profile_id": {
+                    "type": "integer"
                 },
                 "role": {
                     "type": "string"
@@ -1706,7 +1948,7 @@ const docTemplate = `{
         "model.Language": {
             "type": "object",
             "properties": {
-                "id": {
+                "language_id": {
                     "type": "string"
                 },
                 "level": {
@@ -1714,13 +1956,19 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                },
+                "profile_id": {
+                    "type": "integer"
                 }
             }
         },
-        "model.Profile": {
+        "model.ProfileDTO": {
             "type": "object",
             "properties": {
-                "birthdate": {
+                "active": {
+                    "type": "boolean"
+                },
+                "birth_date": {
                     "type": "string"
                 },
                 "certifications": {
@@ -1734,6 +1982,12 @@ const docTemplate = `{
                     "items": {
                         "$ref": "#/definitions/model.Contact"
                     }
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "deleted_at": {
+                    "type": "string"
                 },
                 "description": {
                     "type": "string"
@@ -1753,9 +2007,6 @@ const docTemplate = `{
                         "$ref": "#/definitions/model.Experience"
                     }
                 },
-                "id": {
-                    "type": "integer"
-                },
                 "languages": {
                     "type": "array",
                     "items": {
@@ -1768,6 +2019,9 @@ const docTemplate = `{
                 "phone_number": {
                     "type": "string"
                 },
+                "profile_id": {
+                    "type": "integer"
+                },
                 "projects": {
                     "type": "array",
                     "items": {
@@ -1777,30 +2031,48 @@ const docTemplate = `{
                 "skills": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/model.Skill"
+                        "$ref": "#/definitions/model.SkillDTO"
                     }
                 },
-                "social_medias": {
+                "socialMedias": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/model.SocialMedia"
                     }
+                },
+                "updated_at": {
+                    "type": "string"
                 }
             }
         },
         "model.Project": {
             "type": "object",
             "properties": {
-                "description": {
+                "active": {
+                    "type": "boolean"
+                },
+                "created_at": {
                     "type": "string"
                 },
-                "id": {
+                "deleted_at": {
+                    "type": "string"
+                },
+                "description": {
                     "type": "string"
                 },
                 "link": {
                     "type": "string"
                 },
                 "name": {
+                    "type": "string"
+                },
+                "profile_id": {
+                    "type": "integer"
+                },
+                "project_id": {
+                    "type": "string"
+                },
+                "updated_at": {
                     "type": "string"
                 }
             }
@@ -1847,7 +2119,7 @@ const docTemplate = `{
                     }
                 },
                 "profile_id": {
-                    "type": "string"
+                    "type": "integer"
                 },
                 "project_ids": {
                     "description": "IDs dos projetos selecionados",
@@ -1872,16 +2144,25 @@ const docTemplate = `{
                 }
             }
         },
-        "model.Skill": {
+        "model.SkillDTO": {
             "type": "object",
             "properties": {
-                "id": {
-                    "type": "string"
+                "embeddings": {
+                    "type": "array",
+                    "items": {
+                        "type": "number"
+                    }
                 },
                 "level": {
                     "type": "string"
                 },
                 "name": {
+                    "type": "string"
+                },
+                "profile_id": {
+                    "type": "integer"
+                },
+                "skill_id": {
                     "type": "string"
                 }
             }
@@ -1897,6 +2178,12 @@ const docTemplate = `{
                 },
                 "platform": {
                     "type": "string"
+                },
+                "profile_id": {
+                    "type": "integer"
+                },
+                "social_media_id": {
+                    "type": "integer"
                 }
             }
         }
@@ -1913,6 +2200,8 @@ var SwaggerInfo = &swag.Spec{
 	Description:      "API para gerenciamento de perfis e currículos com IA.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
+	// LeftDelim:        "{{",
+	// RightDelim:       "}}",
 }
 
 func init() {

@@ -28,11 +28,12 @@ func (ctrl *ResumeController) RegisterRoutes(r *gin.Engine) {
 }
 
 // GetAll godoc
-// @Summary Lista todos os currículos
-// @Tags resumes
-// @Produce json
-// @Success 200 {array} model.Resume
-// @Router /resumes/ [get]
+//
+//	@Summary	Lista todos os currículos
+//	@Tags		resumes
+//	@Produce	json
+//	@Success	200	{array}	model.Resume
+//	@Router		/resumes/ [get]
 func (ctrl *ResumeController) GetAll(c *gin.Context) {
 	resumes, err := ctrl.useCase.Get()
 	if err != nil {
@@ -43,13 +44,14 @@ func (ctrl *ResumeController) GetAll(c *gin.Context) {
 }
 
 // FindByID godoc
-// @Summary Busca currículo por ID
-// @Tags resumes
-// @Produce json
-// @Param id path string true "ID do currículo"
-// @Success 200 {object} model.Resume
-// @Failure 404 {object} model.ErrorResponse
-// @Router /resumes/{id} [get]
+//
+//	@Summary	Busca currículo por ID
+//	@Tags		resumes
+//	@Produce	json
+//	@Param		id	path		string	true	"ID do currículo"
+//	@Success	200	{object}	model.Resume
+//	@Failure	404	{object}	model.ErrorResponse
+//	@Router		/resumes/{id} [get]
 func (ctrl *ResumeController) FindByID(c *gin.Context) {
 	id := c.Param("id")
 	resume, err := ctrl.useCase.FindByID(id)
@@ -61,14 +63,15 @@ func (ctrl *ResumeController) FindByID(c *gin.Context) {
 }
 
 // Create godoc
-// @Summary Cria um novo currículo
-// @Tags resumes
-// @Accept json
-// @Produce json
-// @Param resume body model.Resume true "Currículo a ser criado"
-// @Success 201 {object} model.Resume
-// @Failure 400 {object} model.ErrorResponse
-// @Router /resumes/ [post]
+//
+//	@Summary	Cria um novo currículo
+//	@Tags		resumes
+//	@Accept		json
+//	@Produce	json
+//	@Param		resume	body		model.Resume	true	"Currículo a ser criado"
+//	@Success	201		{object}	model.Resume
+//	@Failure	400		{object}	model.ErrorResponse
+//	@Router		/resumes/ [post]
 func (ctrl *ResumeController) Create(c *gin.Context) {
 	var resume model.Resume
 	if err := c.ShouldBindJSON(&resume); err != nil {
@@ -84,16 +87,17 @@ func (ctrl *ResumeController) Create(c *gin.Context) {
 }
 
 // Update godoc
-// @Summary Atualiza um currículo
-// @Tags resumes
-// @Accept json
-// @Produce json
-// @Param id path string true "ID do currículo"
-// @Param resume body model.Resume true "Currículo atualizado"
-// @Success 200 {object} model.Resume
-// @Failure 400 {object} model.ErrorResponse
-// @Failure 404 {object} model.ErrorResponse
-// @Router /resumes/{id} [put]
+//
+//	@Summary	Atualiza um currículo
+//	@Tags		resumes
+//	@Accept		json
+//	@Produce	json
+//	@Param		id		path		string			true	"ID do currículo"
+//	@Param		resume	body		model.Resume	true	"Currículo atualizado"
+//	@Success	200		{object}	model.Resume
+//	@Failure	400		{object}	model.ErrorResponse
+//	@Failure	404		{object}	model.ErrorResponse
+//	@Router		/resumes/{id} [put]
 func (ctrl *ResumeController) Update(c *gin.Context) {
 	id := c.Param("id")
 	var resume model.Resume
@@ -115,13 +119,14 @@ func (ctrl *ResumeController) Update(c *gin.Context) {
 }
 
 // Delete godoc
-// @Summary Remove um currículo
-// @Tags resumes
-// @Produce json
-// @Param id path string true "ID do currículo"
-// @Success 200 {object} map[string]interface{}
-// @Failure 404 {object} model.ErrorResponse
-// @Router /resumes/{id} [delete]
+//
+//	@Summary	Remove um currículo
+//	@Tags		resumes
+//	@Produce	json
+//	@Param		id	path		string	true	"ID do currículo"
+//	@Success	200	{object}	map[string]interface{}
+//	@Failure	404	{object}	model.ErrorResponse
+//	@Router		/resumes/{id} [delete]
 func (ctrl *ResumeController) Delete(c *gin.Context) {
 	id := c.Param("id")
 	success, err := ctrl.useCase.Delete(id)

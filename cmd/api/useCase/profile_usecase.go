@@ -3,6 +3,7 @@ package useCase
 import (
 	"fmt"
 	ai "resume-genAI-api/cmd/api/AI"
+	"resume-genAI-api/cmd/api/dto"
 	"resume-genAI-api/cmd/api/model"
 	"resume-genAI-api/cmd/api/repository"
 	skillMatch "resume-genAI-api/cmd/api/utils"
@@ -31,21 +32,66 @@ func (uc *ProfileUseCase) FindByID(id int) (*model.Profile, error) {
 	uc.repo.LoadLanguages(profile)
 	uc.repo.LoadSocialMedia(profile)
 
-	vagaEmbedding, _ := ai.GenerateEmbedding("angularjs")
+	// vagaEmbedding, _ := ai.GenerateEmbedding("angularjs")
+
+	// var skills []model.Skill
+
+	// for _, skill := range profile.Skills {
+	// 	score := skillMatch.CosineSimilarity(vagaEmbedding, skill.Embeddings)
+
+	// 	if score >= 0.75 {
+	// 		skills = append(skills, skill)
+	// 		fmt.Printf("MATCH: %s (%.2f)\n", skill.Name, score)
+	// 	}
+	// }
+
+	// profile.Skills = skills
+	return profile, nil
+}
+
+func (uc *ProfileUseCase) Generate(job_description dto.RoleDescription) (*dto.Resume, error) {
+	profile, err := uc.FindByID(job_description.ProfileId)
+	skillsStrings, err := ai.Generate(job_description.Description)
+	if err != nil {
+		return nil, err
+	}
 
 	var skills []model.Skill
+	var skillsRequired []model.Skill
 
-	for _, skill := range profile.Skills {
-		score := skillMatch.CosineSimilarity(vagaEmbedding, skill.Embeddings)
+	for _, skillString := range skillsStrings {
+		var skill model.Skill
+		embeddings, err := ai.GenerateEmbedding(skillString)
+		if err != nil {
+			return nil, err
+		}
+		skill.Name = skillString
+		skill.Embeddings = embeddings
 
-		if score >= 0.75 {
-			skills = append(skills, skill)
-			fmt.Printf("MATCH: %s (%.2f)\n", skill.Name, score)
+		for i, skillProfile := range profile.Skills {
+			score := skillMatch.CosineSimilarity(skill.Embeddings, skillProfile.Embeddings)
+			if score >= 0.75 {
+				skills = append(skills, skillProfile)
+				fmt.Printf("MATCH: %s (%.2f)\n", skill.Name, score)
+				break
+			}
+
+			if i == len(profile.Skills)-1 {
+				skillsRequired = append(skillsRequired, skill)
+			}
 		}
 	}
 
 	profile.Skills = skills
-	return profile, nil
+
+	var resume dto.Resume
+	resume.Profile = *profile
+	resume.SkillsRequired = skillsRequired
+	sk := len(profile.Skills)
+	skr := len(skillsRequired)
+	resume.Match = (float64(sk) / float64(skr)) * 100
+
+	return &resume, nil
 }
 
 func (uc *ProfileUseCase) Create(profile model.Profile) (int, error) {

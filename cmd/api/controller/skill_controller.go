@@ -28,11 +28,12 @@ func (ctrl *SkillController) RegisterRoutes(r *gin.Engine) {
 }
 
 // GetAll godoc
-// @Summary Lista todas as skills
-// @Tags skills
-// @Produce json
-// @Success 200 {array} model.Skill
-// @Router /skills/ [get]
+//
+//	@Summary	Lista todas as skills
+//	@Tags		skills
+//	@Produce	json
+//	@Success	200	{array}	model.SkillDTO
+//	@Router		/skills/ [get]
 func (ctrl *SkillController) GetAll(c *gin.Context) {
 	skills, err := ctrl.useCase.Get()
 	if err != nil {
@@ -43,13 +44,14 @@ func (ctrl *SkillController) GetAll(c *gin.Context) {
 }
 
 // FindByID godoc
-// @Summary Busca skill por ID
-// @Tags skills
-// @Produce json
-// @Param id path string true "ID da skill"
-// @Success 200 {object} model.Skill
-// @Failure 404 {object} model.ErrorResponse
-// @Router /skills/{id} [get]
+//
+//	@Summary	Busca skill por ID
+//	@Tags		skills
+//	@Produce	json
+//	@Param		id	path		string	true	"ID da skill"
+//	@Success	200	{object}	model.SkillDTO
+//	@Failure	404	{object}	model.ErrorResponse
+//	@Router		/skills/{id} [get]
 func (ctrl *SkillController) FindByID(c *gin.Context) {
 	id := c.Param("id")
 	skill, err := ctrl.useCase.FindByID(id)
@@ -61,14 +63,15 @@ func (ctrl *SkillController) FindByID(c *gin.Context) {
 }
 
 // Create godoc
-// @Summary Cria uma nova skill
-// @Tags skills
-// @Accept json
-// @Produce json
-// @Param skill body model.Skill true "Skill a ser criada"
-// @Success 201 {object} model.Skill
-// @Failure 400 {object} model.ErrorResponse
-// @Router /skills/ [post]
+//
+//	@Summary	Cria uma nova skill
+//	@Tags		skills
+//	@Accept		json
+//	@Produce	json
+//	@Param		skill	body		model.SkillDTO	true	"Skill a ser criada"
+//	@Success	201		{object}	model.SkillDTO
+//	@Failure	400		{object}	model.ErrorResponse
+//	@Router		/skills/ [post]
 func (ctrl *SkillController) Create(c *gin.Context) {
 	var skill model.Skill
 	if err := c.ShouldBindJSON(&skill); err != nil {
@@ -84,16 +87,17 @@ func (ctrl *SkillController) Create(c *gin.Context) {
 }
 
 // Update godoc
-// @Summary Atualiza uma skill
-// @Tags skills
-// @Accept json
-// @Produce json
-// @Param id path string true "ID da skill"
-// @Param skill body model.Skill true "Skill atualizada"
-// @Success 200 {object} model.Skill
-// @Failure 400 {object} model.ErrorResponse
-// @Failure 404 {object} model.ErrorResponse
-// @Router /skills/{id} [put]
+//
+//	@Summary	Atualiza uma skill
+//	@Tags		skills
+//	@Accept		json
+//	@Produce	json
+//	@Param		id		path		string			true	"ID da skill"
+//	@Param		skill	body		model.SkillDTO	true	"Skill atualizada"
+//	@Success	200		{object}	model.SkillDTO
+//	@Failure	400		{object}	model.ErrorResponse
+//	@Failure	404		{object}	model.ErrorResponse
+//	@Router		/skills/{id} [put]
 func (ctrl *SkillController) Update(c *gin.Context) {
 	id := c.Param("id")
 	var skill model.Skill
@@ -115,13 +119,14 @@ func (ctrl *SkillController) Update(c *gin.Context) {
 }
 
 // Delete godoc
-// @Summary Remove uma skill
-// @Tags skills
-// @Produce json
-// @Param id path string true "ID da skill"
-// @Success 200 {object} map[string]interface{}
-// @Failure 404 {object} model.ErrorResponse
-// @Router /skills/{id} [delete]
+//
+//	@Summary	Remove uma skill
+//	@Tags		skills
+//	@Produce	json
+//	@Param		id	path		string	true	"ID da skill"
+//	@Success	200	{object}	map[string]interface{}
+//	@Failure	404	{object}	model.ErrorResponse
+//	@Router		/skills/{id} [delete]
 func (ctrl *SkillController) Delete(c *gin.Context) {
 	id := c.Param("id")
 	success, err := ctrl.useCase.Delete(id)

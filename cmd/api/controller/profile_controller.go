@@ -32,12 +32,13 @@ func (ctrl *ProfileController) RegisterRoutes(r *gin.Engine) {
 }
 
 // Get godoc
-// @Summary Lista todos os perfis
-// @Description Retorna todos os perfis cadastrados
-// @Tags profiles
-// @Produce json
-// @Success 200 {array} model.Profile
-// @Router /profiles/ [get]
+//
+//	@Summary		Lista todos os perfis
+//	@Description	Retorna todos os perfis cadastrados
+//	@Tags			profiles
+//	@Produce		json
+//	@Success		200	{array}	model.ProfileDTO
+//	@Router			/profiles/ [get]
 func (ctrl *ProfileController) Get(c *gin.Context) {
 	profiles, err := ctrl.useCase.Get()
 	if err != nil {
@@ -48,15 +49,16 @@ func (ctrl *ProfileController) Get(c *gin.Context) {
 }
 
 // FindByID godoc
-// @Summary Busca perfil por ID
-// @Description Retorna um perfil pelo ID
-// @Tags profiles
-// @Produce json
-// @Param id path int true "ID do perfil"
-// @Success 200 {object} model.Profile
-// @Failure 400 {object} model.ErrorResponse
-// @Failure 404 {object} model.ErrorResponse
-// @Router /profiles/{id} [get]
+//
+//	@Summary		Busca perfil por ID
+//	@Description	Retorna um perfil pelo ID
+//	@Tags			profiles
+//	@Produce		json
+//	@Param			id	path		int	true	"ID do perfil"
+//	@Success		200	{object}	model.ProfileDTO
+//	@Failure		400	{object}	model.ErrorResponse
+//	@Failure		404	{object}	model.ErrorResponse
+//	@Router			/profiles/{id} [get]
 func (ctrl *ProfileController) FindByID(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -76,15 +78,16 @@ func (ctrl *ProfileController) FindByID(c *gin.Context) {
 }
 
 // Create godoc
-// @Summary Cria um novo perfil
-// @Description Cria um novo perfil com os dados informados
-// @Tags profiles
-// @Accept json
-// @Produce json
-// @Param profile body model.Profile true "Perfil a ser criado"
-// @Success 201 {object} model.Profile
-// @Failure 400 {object} model.ErrorResponse
-// @Router /profiles/ [post]
+//
+//	@Summary		Cria um novo perfil
+//	@Description	Cria um novo perfil com os dados informados
+//	@Tags			profiles
+//	@Accept			json
+//	@Produce		json
+//	@Param			profile	body		model.ProfileDTO	true	"Perfil a ser criado"
+//	@Success		201		{object}	model.ProfileDTO
+//	@Failure		400		{object}	model.ErrorResponse
+//	@Router			/profiles/ [post]
 func (ctrl *ProfileController) Create(c *gin.Context) {
 	var profile model.Profile
 	if err := c.ShouldBindJSON(&profile); err != nil {
@@ -101,15 +104,16 @@ func (ctrl *ProfileController) Create(c *gin.Context) {
 }
 
 // Generate godoc
-// @Summary Generate a new resume using LLMs
-// @Description Generate a new resume based on job description
-// @Tags profiles
-// @Accept json
-// @Produce json
-// @Param profile body dto.RoleDescription true "Resume generated"
-// @Success 201 {object} dto.RoleDescription
-// @Failure 400 {object} model.ErrorResponse
-// @Router /profiles/ [post]
+//
+//	@Summary		Gera um novo perfil baseado na descrição de vaga
+//	@Description	Gera um novo perfil usando LLMs com base na descrição da vaga
+//	@Tags			profiles
+//	@Accept			json
+//	@Produce		json
+//	@Param			roleDescription	body		dto.RoleDescription	true	"Descrição da vaga"
+//	@Success		201				{object}	model.ProfileDTO
+//	@Failure		400				{object}	model.ErrorResponse
+//	@Router			/profiles/generate [post]
 func (ctrl *ProfileController) Generate(c *gin.Context) {
 
 	var job_description dto.RoleDescription
@@ -117,26 +121,29 @@ func (ctrl *ProfileController) Generate(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	profile, err := ctrl.useCase.FindByID(job_description.ProfileId)
+
+	resume, err := ctrl.useCase.Generate(job_description)
+
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusCreated, profile)
+	c.JSON(http.StatusCreated, resume)
 }
 
 // Update godoc
-// @Summary Atualiza um perfil
-// @Description Atualiza um perfil existente pelo ID
-// @Tags profiles
-// @Accept json
-// @Produce json
-// @Param id path int true "ID do perfil"
-// @Param profile body model.Profile true "Perfil atualizado"
-// @Success 200 {object} model.Profile
-// @Failure 400 {object} model.ErrorResponse
-// @Failure 404 {object} model.ErrorResponse
-// @Router /profiles/{id} [put]
+//
+//	@Summary		Atualiza um perfil
+//	@Description	Atualiza um perfil existente pelo ID
+//	@Tags			profiles
+//	@Accept			json
+//	@Produce		json
+//	@Param			id		path		int					true	"ID do perfil"
+//	@Param			profile	body		model.ProfileDTO	true	"Perfil atualizado"
+//	@Success		200		{object}	model.ProfileDTO
+//	@Failure		400		{object}	model.ErrorResponse
+//	@Failure		404		{object}	model.ErrorResponse
+//	@Router			/profiles/{id} [put]
 func (ctrl *ProfileController) Update(c *gin.Context) {
 	var profile model.Profile
 	if err := c.ShouldBindJSON(&profile); err != nil {
@@ -156,15 +163,16 @@ func (ctrl *ProfileController) Update(c *gin.Context) {
 }
 
 // Delete godoc
-// @Summary Remove um perfil
-// @Description Remove um perfil pelo ID
-// @Tags profiles
-// @Produce json
-// @Param id path int true "ID do perfil"
-// @Success 200 {object} map[string]interface{}
-// @Failure 400 {object} model.ErrorResponse
-// @Failure 404 {object} model.ErrorResponse
-// @Router /profiles/{id} [delete]
+//
+//	@Summary		Remove um perfil
+//	@Description	Remove um perfil pelo ID
+//	@Tags			profiles
+//	@Produce		json
+//	@Param			id	path		int	true	"ID do perfil"
+//	@Success		200	{object}	map[string]interface{}
+//	@Failure		400	{object}	model.ErrorResponse
+//	@Failure		404	{object}	model.ErrorResponse
+//	@Router			/profiles/{id} [delete]
 func (ctrl *ProfileController) Delete(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {

@@ -28,11 +28,12 @@ func (ctrl *ExperienceController) RegisterRoutes(r *gin.Engine) {
 }
 
 // GetAll godoc
-// @Summary Lista todas as experiências
-// @Tags experiences
-// @Produce json
-// @Success 200 {array} model.Experience
-// @Router /experiences/ [get]
+//
+//	@Summary	Lista todas as experiências
+//	@Tags		experiences
+//	@Produce	json
+//	@Success	200	{array}	model.Experience
+//	@Router		/experiences/ [get]
 func (ctrl *ExperienceController) GetAll(c *gin.Context) {
 	exp, err := ctrl.useCase.Get()
 	if err != nil {
@@ -43,13 +44,14 @@ func (ctrl *ExperienceController) GetAll(c *gin.Context) {
 }
 
 // FindByID godoc
-// @Summary Busca experiência por ID
-// @Tags experiences
-// @Produce json
-// @Param id path string true "ID da experiência"
-// @Success 200 {object} model.Experience
-// @Failure 404 {object} model.ErrorResponse
-// @Router /experiences/{id} [get]
+//
+//	@Summary	Busca experiência por ID
+//	@Tags		experiences
+//	@Produce	json
+//	@Param		id	path		string	true	"ID da experiência"
+//	@Success	200	{object}	model.Experience
+//	@Failure	404	{object}	model.ErrorResponse
+//	@Router		/experiences/{id} [get]
 func (ctrl *ExperienceController) FindByID(c *gin.Context) {
 	id := c.Param("id")
 	exp, err := ctrl.useCase.FindByID(id)
@@ -61,14 +63,15 @@ func (ctrl *ExperienceController) FindByID(c *gin.Context) {
 }
 
 // Create godoc
-// @Summary Cria uma nova experiência
-// @Tags experiences
-// @Accept json
-// @Produce json
-// @Param experience body model.Experience true "Experiência a ser criada"
-// @Success 201 {object} model.Experience
-// @Failure 400 {object} model.ErrorResponse
-// @Router /experiences/ [post]
+//
+//	@Summary	Cria uma nova experiência
+//	@Tags		experiences
+//	@Accept		json
+//	@Produce	json
+//	@Param		experience	body		model.Experience	true	"Experiência a ser criada"
+//	@Success	201			{object}	model.Experience
+//	@Failure	400			{object}	model.ErrorResponse
+//	@Router		/experiences/ [post]
 func (ctrl *ExperienceController) Create(c *gin.Context) {
 	var exp model.Experience
 	if err := c.ShouldBindJSON(&exp); err != nil {
@@ -84,16 +87,17 @@ func (ctrl *ExperienceController) Create(c *gin.Context) {
 }
 
 // Update godoc
-// @Summary Atualiza uma experiência
-// @Tags experiences
-// @Accept json
-// @Produce json
-// @Param id path string true "ID da experiência"
-// @Param experience body model.Experience true "Experiência atualizada"
-// @Success 200 {object} model.Experience
-// @Failure 400 {object} model.ErrorResponse
-// @Failure 404 {object} model.ErrorResponse
-// @Router /experiences/{id} [put]
+//
+//	@Summary	Atualiza uma experiência
+//	@Tags		experiences
+//	@Accept		json
+//	@Produce	json
+//	@Param		id			path		string				true	"ID da experiência"
+//	@Param		experience	body		model.Experience	true	"Experiência atualizada"
+//	@Success	200			{object}	model.Experience
+//	@Failure	400			{object}	model.ErrorResponse
+//	@Failure	404			{object}	model.ErrorResponse
+//	@Router		/experiences/{id} [put]
 func (ctrl *ExperienceController) Update(c *gin.Context) {
 	id := c.Param("id")
 	var exp model.Experience
@@ -115,13 +119,14 @@ func (ctrl *ExperienceController) Update(c *gin.Context) {
 }
 
 // Delete godoc
-// @Summary Remove uma experiência
-// @Tags experiences
-// @Produce json
-// @Param id path string true "ID da experiência"
-// @Success 200 {object} map[string]interface{}
-// @Failure 404 {object} model.ErrorResponse
-// @Router /experiences/{id} [delete]
+//
+//	@Summary	Remove uma experiência
+//	@Tags		experiences
+//	@Produce	json
+//	@Param		id	path		string	true	"ID da experiência"
+//	@Success	200	{object}	map[string]interface{}
+//	@Failure	404	{object}	model.ErrorResponse
+//	@Router		/experiences/{id} [delete]
 func (ctrl *ExperienceController) Delete(c *gin.Context) {
 	id := c.Param("id")
 	success, err := ctrl.useCase.Delete(id)

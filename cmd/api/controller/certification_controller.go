@@ -29,11 +29,12 @@ func (ctrl *CertificationController) RegisterRoutes(r *gin.Engine) {
 }
 
 // GetAll godoc
-// @Summary Lista todas as certificações
-// @Tags certifications
-// @Produce json
-// @Success 200 {array} model.Certification
-// @Router /certifications/ [get]
+//
+//	@Summary	Lista todas as certificações
+//	@Tags		certifications
+//	@Produce	json
+//	@Success	200	{array}	model.Certification
+//	@Router		/certifications/ [get]
 func (ctrl *CertificationController) GetAll(c *gin.Context) {
 	certs, err := ctrl.useCase.Get()
 	if err != nil {
@@ -44,13 +45,14 @@ func (ctrl *CertificationController) GetAll(c *gin.Context) {
 }
 
 // FindByID godoc
-// @Summary Busca certificação por ID
-// @Tags certifications
-// @Produce json
-// @Param id path string true "ID da certificação"
-// @Success 200 {object} model.Certification
-// @Failure 404 {object} model.ErrorResponse
-// @Router /certifications/{id} [get]
+//
+//	@Summary	Busca certificação por ID
+//	@Tags		certifications
+//	@Produce	json
+//	@Param		id	path		string	true	"ID da certificação"
+//	@Success	200	{object}	model.Certification
+//	@Failure	404	{object}	model.ErrorResponse
+//	@Router		/certifications/{id} [get]
 func (ctrl *CertificationController) FindByID(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	cert, err := ctrl.useCase.FindByID(id)
@@ -62,14 +64,15 @@ func (ctrl *CertificationController) FindByID(c *gin.Context) {
 }
 
 // Create godoc
-// @Summary Cria uma nova certificação
-// @Tags certifications
-// @Accept json
-// @Produce json
-// @Param certification body model.Certification true "Certificação a ser criada"
-// @Success 201 {object} model.Certification
-// @Failure 400 {object} model.ErrorResponse
-// @Router /certifications/ [post]
+//
+//	@Summary	Cria uma nova certificação
+//	@Tags		certifications
+//	@Accept		json
+//	@Produce	json
+//	@Param		certification	body		model.Certification	true	"Certificação a ser criada"
+//	@Success	201				{object}	model.Certification
+//	@Failure	400				{object}	model.ErrorResponse
+//	@Router		/certifications/ [post]
 func (ctrl *CertificationController) Create(c *gin.Context) {
 	var cert model.Certification
 	if err := c.ShouldBindJSON(&cert); err != nil {
@@ -85,16 +88,17 @@ func (ctrl *CertificationController) Create(c *gin.Context) {
 }
 
 // Update godoc
-// @Summary Atualiza uma certificação
-// @Tags certifications
-// @Accept json
-// @Produce json
-// @Param id path string true "ID da certificação"
-// @Param certification body model.Certification true "Certificação atualizada"
-// @Success 200 {object} model.Certification
-// @Failure 400 {object} model.ErrorResponse
-// @Failure 404 {object} model.ErrorResponse
-// @Router /certifications/{id} [put]
+//
+//	@Summary	Atualiza uma certificação
+//	@Tags		certifications
+//	@Accept		json
+//	@Produce	json
+//	@Param		id				path		string				true	"ID da certificação"
+//	@Param		certification	body		model.Certification	true	"Certificação atualizada"
+//	@Success	200				{object}	model.Certification
+//	@Failure	400				{object}	model.ErrorResponse
+//	@Failure	404				{object}	model.ErrorResponse
+//	@Router		/certifications/{id} [put]
 func (ctrl *CertificationController) Update(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	var cert model.Certification
@@ -116,13 +120,14 @@ func (ctrl *CertificationController) Update(c *gin.Context) {
 }
 
 // Delete godoc
-// @Summary Remove uma certificação
-// @Tags certifications
-// @Produce json
-// @Param id path string true "ID da certificação"
-// @Success 200 {object} map[string]interface{}
-// @Failure 404 {object} model.ErrorResponse
-// @Router /certifications/{id} [delete]
+//
+//	@Summary	Remove uma certificação
+//	@Tags		certifications
+//	@Produce	json
+//	@Param		id	path		string	true	"ID da certificação"
+//	@Success	200	{object}	map[string]interface{}
+//	@Failure	404	{object}	model.ErrorResponse
+//	@Router		/certifications/{id} [delete]
 func (ctrl *CertificationController) Delete(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	success, err := ctrl.useCase.Delete(id)
