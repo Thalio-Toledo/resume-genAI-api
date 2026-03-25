@@ -6,4 +6,6 @@ type Certification struct {
 	Name             string `json:"name"`
 	Issuer           string `json:"issuer"`
 	DateIssued       string `json:"date_issued"`
+
+	Skills []Skill `json:"skills"`
 }

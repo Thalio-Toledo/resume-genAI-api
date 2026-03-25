@@ -152,7 +152,7 @@ func (r *SkillRepository) FindByProfileID(profileID int) ([]model.Skill, error) 
 	return skills, nil
 }
 
-func (r *SkillRepository) Create(skill model.Skill, embeddings []float32) (string, error) {
+func (r *SkillRepository) Create(skill *model.Skill, embeddings []float32) (int, error) {
 	embeddingJSON, _ := json.Marshal(embeddings)
 	query := `
 		INSERT INTO skill (
@@ -170,7 +170,7 @@ func (r *SkillRepository) Create(skill model.Skill, embeddings []float32) (strin
 		)
 	`
 
-	var id string
+	var id int
 
 	err := r.db.QueryRow(
 		query,
@@ -181,8 +181,10 @@ func (r *SkillRepository) Create(skill model.Skill, embeddings []float32) (strin
 	).Scan(&id)
 
 	if err != nil {
-		return "", err
+		return 0, err
 	}
+
+	skill.SkillId = id
 
 	return id, nil
 }

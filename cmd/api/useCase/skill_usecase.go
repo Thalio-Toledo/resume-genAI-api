@@ -26,7 +26,7 @@ func (uc *SkillUseCase) FindByProfileID(profileID int) ([]model.Skill, error) {
 	return uc.repo.FindByProfileID(profileID)
 }
 
-func (uc *SkillUseCase) Create(skill model.Skill) (string, error) {
+func (uc *SkillUseCase) Create(skill *model.Skill) (int, error) {
 	embeddings, _ := ai.GenerateEmbedding(skill.Name)
 	return uc.repo.Create(skill, embeddings)
 }

@@ -17,13 +17,13 @@ func NewSkillController(uc *useCase.SkillUseCase) *SkillController {
 }
 
 func (ctrl *SkillController) RegisterRoutes(r *gin.Engine) {
-	skills := r.Group("/skills/")
+	skills := r.Group("/skills")
 	{
-		skills.GET("", ctrl.GetAll)
-		skills.GET(":id", ctrl.FindByID)
-		skills.POST("", ctrl.Create)
-		skills.PUT(":id", ctrl.Update)
-		skills.DELETE(":id", ctrl.Delete)
+		skills.GET("/", ctrl.GetAll)
+		skills.GET("/:id", ctrl.FindByID)
+		skills.POST("/", ctrl.Create)
+		skills.PUT("/", ctrl.Update)
+		skills.DELETE("/:id", ctrl.Delete)
 	}
 }
 
@@ -78,7 +78,7 @@ func (ctrl *SkillController) Create(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, model.ErrorResponse{Error: err.Error()})
 		return
 	}
-	_, err := ctrl.useCase.Create(skill)
+	_, err := ctrl.useCase.Create(&skill)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})
 		return
@@ -99,13 +99,12 @@ func (ctrl *SkillController) Create(c *gin.Context) {
 //	@Failure	404		{object}	model.ErrorResponse
 //	@Router		/skills/{id} [put]
 func (ctrl *SkillController) Update(c *gin.Context) {
-	id := c.Param("id")
 	var skill model.Skill
 	if err := c.ShouldBindJSON(&skill); err != nil {
 		c.JSON(http.StatusBadRequest, model.ErrorResponse{Error: err.Error()})
 		return
 	}
-	skill.SkillId = id
+
 	success, err := ctrl.useCase.Update(skill)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, model.ErrorResponse{Error: err.Error()})

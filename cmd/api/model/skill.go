@@ -3,7 +3,7 @@ package model
 import "database/sql"
 
 type Skill struct {
-	SkillId        string         `json:"skill_id"`
+	SkillId        int            `json:"skill_id"`
 	ProfileID      int            `json:"profile_id"`
 	Name           string         `json:"name"`
 	Level          string         `json:"level"`
