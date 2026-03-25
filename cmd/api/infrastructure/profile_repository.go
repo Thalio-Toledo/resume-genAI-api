@@ -180,49 +180,6 @@ func (p *ProfileRepository) LoadCertifications(profile *domain.Profile) error {
 	return nil
 }
 
-func (p *ProfileRepository) LoadContacts(profile *domain.Profile) error {
-	query := `
-		SELECT
-			 contact_id
-			,profile_id
-			,email
-			,phone_number
-		FROM contact
-		WHERE profile_id = @profile_id
-	`
-	rows, err := p.db.Query(query, sql.Named("profile_id", profile.ProfileId))
-	if err != nil {
-		return err
-	}
-	defer rows.Close()
-
-	var contacts []domain.Contact
-
-	for rows.Next() {
-		var contact domain.Contact
-
-		err := rows.Scan(
-			&contact.ContactId,
-			&contact.ProfileId,
-			&contact.Email,
-			&contact.PhoneNumber,
-		)
-		if err != nil {
-			return err
-		}
-
-		contacts = append(contacts, contact)
-
-	}
-
-	if err := rows.Err(); err != nil {
-		return err
-	}
-
-	profile.Contacts = contacts
-	return nil
-}
-
 func (p *ProfileRepository) LoadEducations(profile *domain.Profile) error {
 	query := `
 		  SELECT 
@@ -319,6 +276,49 @@ func (p *ProfileRepository) LoadExperiences(profile *domain.Profile) error {
 
 	profile.Experiences = experiences
 	return nil
+}
+
+func (p *ProfileRepository) AddExperience(experience domain.Experience) (int, error) {
+	query := `
+		INSERT INTO experience (
+			profile_id,
+			company,
+			is_current,
+			role,
+			description,
+			start_date,
+			end_date
+		)
+		OUTPUT INSERTED.experience_id
+		VALUES (
+			@profile_id,
+			@company,
+			@is_current,
+			@role,
+			@description,
+			@start_date,
+			@end_date
+		)
+	`
+
+	var id int
+
+	err := p.db.QueryRow(
+		query,
+		sql.Named("profile_id", experience.ProfileID),
+		sql.Named("company", experience.Company),
+		sql.Named("is_current", experience.IsCurrent),
+		sql.Named("role", experience.Role),
+		sql.Named("description", experience.Description),
+		sql.Named("start_date", experience.StartDate),
+		sql.Named("end_date", experience.EndDate),
+	).Scan(&id)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return id, nil
 }
 
 func (p *ProfileRepository) LoadLanguages(profile *domain.Profile) error {
