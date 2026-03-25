@@ -1,4 +1,4 @@
-package model
+package domain
 
 type Experience struct {
 	ExperienceId string `json:"experience_id"`

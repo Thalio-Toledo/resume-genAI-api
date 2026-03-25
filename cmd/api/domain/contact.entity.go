@@ -1,4 +1,4 @@
-package model
+package domain
 
 type Contact struct {
 	ContactId   int    `json:"contact_id"`

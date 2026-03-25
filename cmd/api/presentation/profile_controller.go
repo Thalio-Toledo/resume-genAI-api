@@ -1,21 +1,21 @@
-package controller
+package presentation
 
 import (
 	"net/http"
 	"strconv"
 
+	"resume-genAI-api/cmd/api/application"
+	"resume-genAI-api/cmd/api/domain"
 	"resume-genAI-api/cmd/api/dto"
-	"resume-genAI-api/cmd/api/model"
-	"resume-genAI-api/cmd/api/useCase"
 
 	"github.com/gin-gonic/gin"
 )
 
 type ProfileController struct {
-	useCase *useCase.ProfileUseCase
+	useCase *application.ProfileUseCase
 }
 
-func NewProfileController(uc *useCase.ProfileUseCase) *ProfileController {
+func NewProfileController(uc *application.ProfileUseCase) *ProfileController {
 	return &ProfileController{useCase: uc}
 }
 
@@ -89,7 +89,7 @@ func (ctrl *ProfileController) FindByID(c *gin.Context) {
 //	@Failure		400		{object}	model.ErrorResponse
 //	@Router			/profiles/ [post]
 func (ctrl *ProfileController) Create(c *gin.Context) {
-	var profile model.Profile
+	var profile domain.Profile
 	if err := c.ShouldBindJSON(&profile); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -145,7 +145,7 @@ func (ctrl *ProfileController) Generate(c *gin.Context) {
 //	@Failure		404		{object}	model.ErrorResponse
 //	@Router			/profiles/{id} [put]
 func (ctrl *ProfileController) Update(c *gin.Context) {
-	var profile model.Profile
+	var profile domain.Profile
 	if err := c.ShouldBindJSON(&profile); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

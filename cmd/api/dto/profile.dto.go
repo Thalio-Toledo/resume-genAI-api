@@ -1,6 +1,6 @@
 package dto
 
-import "resume-genAI-api/cmd/api/model"
+import "resume-genAI-api/cmd/api/domain"
 
 type ProfileDTO struct {
 	ProfileId   int    `json:"profile_id"`
@@ -10,12 +10,12 @@ type ProfileDTO struct {
 	PhoneNumber string `json:"phone_number"`
 	Description string `json:"description"`
 
-	Projects       []model.Project       `json:"projects"`
-	Certifications []model.Certification `json:"certifications"`
-	Contacts       []model.Contact       `json:"contacts"`
-	SocialMedias   []model.SocialMedia   `json:"socialMedias"`
-	Educations     []model.Education     `json:"educations"`
-	Experiences    []model.Experience    `json:"experiences"`
-	Skills         []skillDTO            `json:"skills"`
-	Languages      []model.Language      `json:"languages"`
+	Projects       []domain.Project       `json:"projects"`
+	Certifications []domain.Certification `json:"certifications"`
+	Contacts       []domain.Contact       `json:"contacts"`
+	SocialMedias   []domain.SocialMedia   `json:"socialMedias"`
+	Educations     []domain.Education     `json:"educations"`
+	Experiences    []domain.Experience    `json:"experiences"`
+	Skills         []skillDTO             `json:"skills"`
+	Languages      []domain.Language      `json:"languages"`
 }

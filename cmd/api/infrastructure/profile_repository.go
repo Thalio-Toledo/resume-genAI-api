@@ -1,25 +1,25 @@
-package repository
+package infrastructure
 
 import (
 	"database/sql"
 	"encoding/json"
 	"errors"
-	"resume-genAI-api/cmd/api/model"
+	"resume-genAI-api/cmd/api/domain"
 )
 
 type ProfileRepository struct {
-	profiles []model.Profile
+	profiles []domain.Profile
 	db       *sql.DB
 }
 
 func NewProfileRepository(db *sql.DB) *ProfileRepository {
 	return &ProfileRepository{
-		profiles: []model.Profile{},
+		profiles: []domain.Profile{},
 		db:       db,
 	}
 }
 
-func (p *ProfileRepository) Get() ([]model.Profile, error) {
+func (p *ProfileRepository) Get() ([]domain.Profile, error) {
 	query := `
 		SELECT
 			profile_id,
@@ -36,10 +36,10 @@ func (p *ProfileRepository) Get() ([]model.Profile, error) {
 	}
 	defer rows.Close()
 
-	var profiles []model.Profile
+	var profiles []domain.Profile
 
 	for rows.Next() {
-		var profile model.Profile
+		var profile domain.Profile
 
 		err := rows.Scan(
 			&profile.ProfileId,
@@ -63,7 +63,7 @@ func (p *ProfileRepository) Get() ([]model.Profile, error) {
 	return profiles, nil
 }
 
-func (p *ProfileRepository) FindByID(id int) (*model.Profile, error) {
+func (p *ProfileRepository) FindByID(id int) (*domain.Profile, error) {
 	query := `
 		SELECT
 			profile_id,
@@ -75,7 +75,7 @@ func (p *ProfileRepository) FindByID(id int) (*model.Profile, error) {
 		FROM profile
 		WHERE profile_id = @id
 	`
-	var profile model.Profile
+	var profile domain.Profile
 
 	err := p.db.QueryRow(query, sql.Named("id", id)).Scan(
 		&profile.ProfileId,
@@ -92,7 +92,7 @@ func (p *ProfileRepository) FindByID(id int) (*model.Profile, error) {
 	return &profile, nil
 }
 
-func (p *ProfileRepository) LoadProjects(profile *model.Profile) error {
+func (p *ProfileRepository) LoadProjects(profile *domain.Profile) error {
 	query := `
 		SELECT
 			 project_id
@@ -109,10 +109,10 @@ func (p *ProfileRepository) LoadProjects(profile *model.Profile) error {
 	}
 	defer rows.Close()
 
-	var projects []model.Project
+	var projects []domain.Project
 
 	for rows.Next() {
-		var project model.Project
+		var project domain.Project
 
 		err := rows.Scan(
 			&project.ProjectId,
@@ -135,7 +135,7 @@ func (p *ProfileRepository) LoadProjects(profile *model.Profile) error {
 	return nil
 }
 
-func (p *ProfileRepository) LoadCertifications(profile *model.Profile) error {
+func (p *ProfileRepository) LoadCertifications(profile *domain.Profile) error {
 	query := `
 		SELECT 
 			 certification_id
@@ -152,10 +152,10 @@ func (p *ProfileRepository) LoadCertifications(profile *model.Profile) error {
 	}
 	defer rows.Close()
 
-	var certifications []model.Certification
+	var certifications []domain.Certification
 
 	for rows.Next() {
-		var certification model.Certification
+		var certification domain.Certification
 
 		err := rows.Scan(
 			&certification.Certification_Id,
@@ -180,7 +180,7 @@ func (p *ProfileRepository) LoadCertifications(profile *model.Profile) error {
 	return nil
 }
 
-func (p *ProfileRepository) LoadContacts(profile *model.Profile) error {
+func (p *ProfileRepository) LoadContacts(profile *domain.Profile) error {
 	query := `
 		SELECT
 			 contact_id
@@ -196,10 +196,10 @@ func (p *ProfileRepository) LoadContacts(profile *model.Profile) error {
 	}
 	defer rows.Close()
 
-	var contacts []model.Contact
+	var contacts []domain.Contact
 
 	for rows.Next() {
-		var contact model.Contact
+		var contact domain.Contact
 
 		err := rows.Scan(
 			&contact.ContactId,
@@ -223,7 +223,7 @@ func (p *ProfileRepository) LoadContacts(profile *model.Profile) error {
 	return nil
 }
 
-func (p *ProfileRepository) LoadEducations(profile *model.Profile) error {
+func (p *ProfileRepository) LoadEducations(profile *domain.Profile) error {
 	query := `
 		  SELECT 
 			 education_id
@@ -242,10 +242,10 @@ func (p *ProfileRepository) LoadEducations(profile *model.Profile) error {
 	}
 	defer rows.Close()
 
-	var educations []model.Education
+	var educations []domain.Education
 
 	for rows.Next() {
-		var education model.Education
+		var education domain.Education
 
 		err := rows.Scan(
 			&education.EducationId,
@@ -271,7 +271,7 @@ func (p *ProfileRepository) LoadEducations(profile *model.Profile) error {
 	return nil
 }
 
-func (p *ProfileRepository) LoadExperiences(profile *model.Profile) error {
+func (p *ProfileRepository) LoadExperiences(profile *domain.Profile) error {
 	query := `
 		  SELECT 
 			 experience_id
@@ -291,10 +291,10 @@ func (p *ProfileRepository) LoadExperiences(profile *model.Profile) error {
 	}
 	defer rows.Close()
 
-	var experiences []model.Experience
+	var experiences []domain.Experience
 
 	for rows.Next() {
-		var experience model.Experience
+		var experience domain.Experience
 
 		err := rows.Scan(
 			&experience.ExperienceId,
@@ -321,7 +321,7 @@ func (p *ProfileRepository) LoadExperiences(profile *model.Profile) error {
 	return nil
 }
 
-func (p *ProfileRepository) LoadLanguages(profile *model.Profile) error {
+func (p *ProfileRepository) LoadLanguages(profile *domain.Profile) error {
 	query := `
 		  SELECT 
 			 language_id
@@ -337,10 +337,10 @@ func (p *ProfileRepository) LoadLanguages(profile *model.Profile) error {
 	}
 	defer rows.Close()
 
-	var languages []model.Language
+	var languages []domain.Language
 
 	for rows.Next() {
-		var language model.Language
+		var language domain.Language
 
 		err := rows.Scan(
 			&language.LanguageId,
@@ -363,7 +363,7 @@ func (p *ProfileRepository) LoadLanguages(profile *model.Profile) error {
 	return nil
 }
 
-func (p *ProfileRepository) LoadSkill(profile *model.Profile) error {
+func (p *ProfileRepository) LoadSkill(profile *domain.Profile) error {
 	query := `
 		  SELECT 
 			 skill_id
@@ -380,10 +380,10 @@ func (p *ProfileRepository) LoadSkill(profile *model.Profile) error {
 	}
 	defer rows.Close()
 
-	var skills []model.Skill
+	var skills []domain.Skill
 
 	for rows.Next() {
-		var skill model.Skill
+		var skill domain.Skill
 
 		err := rows.Scan(
 			&skill.SkillId,
@@ -414,7 +414,7 @@ func (p *ProfileRepository) LoadSkill(profile *model.Profile) error {
 	return nil
 }
 
-func (p *ProfileRepository) LoadSocialMedia(profile *model.Profile) error {
+func (p *ProfileRepository) LoadSocialMedia(profile *domain.Profile) error {
 	query := `
 		  SELECT 
 			 social_media_id
@@ -431,10 +431,10 @@ func (p *ProfileRepository) LoadSocialMedia(profile *model.Profile) error {
 	}
 	defer rows.Close()
 
-	var socialMedias []model.SocialMedia
+	var socialMedias []domain.SocialMedia
 
 	for rows.Next() {
-		var socialMedia model.SocialMedia
+		var socialMedia domain.SocialMedia
 
 		err := rows.Scan(
 			&socialMedia.SocialMediaId,
@@ -458,7 +458,7 @@ func (p *ProfileRepository) LoadSocialMedia(profile *model.Profile) error {
 	return nil
 }
 
-func (p *ProfileRepository) Create(profile model.Profile) (int, error) {
+func (p *ProfileRepository) Create(profile domain.Profile) (int, error) {
 	query := `
 		INSERT INTO profile (
 			name,
@@ -495,7 +495,7 @@ func (p *ProfileRepository) Create(profile model.Profile) (int, error) {
 	return id, nil
 }
 
-func (p *ProfileRepository) Update(profile model.Profile) (bool, error) {
+func (p *ProfileRepository) Update(profile domain.Profile) (bool, error) {
 	query := `
 		UPDATE profile
 		SET

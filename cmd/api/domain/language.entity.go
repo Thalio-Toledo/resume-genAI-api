@@ -1,4 +1,4 @@
-package model
+package domain
 
 type Language struct {
 	LanguageId string `json:"language_id"`

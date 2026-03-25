@@ -1,4 +1,4 @@
-package model
+package domain
 
 type Resume struct {
 	ID        string `json:"id"`

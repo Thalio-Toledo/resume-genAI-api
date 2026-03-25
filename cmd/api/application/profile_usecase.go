@@ -1,27 +1,27 @@
-package useCase
+package application
 
 import (
 	"fmt"
 	ai "resume-genAI-api/cmd/api/AI"
+	"resume-genAI-api/cmd/api/domain"
 	"resume-genAI-api/cmd/api/dto"
-	"resume-genAI-api/cmd/api/model"
-	"resume-genAI-api/cmd/api/repository"
+	"resume-genAI-api/cmd/api/infrastructure"
 	skillMatch "resume-genAI-api/cmd/api/utils"
 )
 
 type ProfileUseCase struct {
-	repo *repository.ProfileRepository
+	repo *infrastructure.ProfileRepository
 }
 
-func NewProfileUseCase(repo *repository.ProfileRepository) *ProfileUseCase {
+func NewProfileUseCase(repo *infrastructure.ProfileRepository) *ProfileUseCase {
 	return &ProfileUseCase{repo: repo}
 }
 
-func (uc *ProfileUseCase) Get() ([]model.Profile, error) {
+func (uc *ProfileUseCase) Get() ([]domain.Profile, error) {
 	return uc.repo.Get()
 }
 
-func (uc *ProfileUseCase) FindByID(id int) (*model.Profile, error) {
+func (uc *ProfileUseCase) FindByID(id int) (*domain.Profile, error) {
 	profile, _ := uc.repo.FindByID(id)
 	uc.repo.LoadEducations(profile)
 	uc.repo.LoadProjects(profile)
@@ -56,11 +56,11 @@ func (uc *ProfileUseCase) Generate(job_description dto.RoleDescription) (*dto.Re
 		return nil, err
 	}
 
-	var skills []model.Skill
-	var skillsRequired []model.Skill
+	var skills []domain.Skill
+	var skillsRequired []domain.Skill
 
 	for _, skillString := range skillsStrings {
-		var skill model.Skill
+		var skill domain.Skill
 		embeddings, err := ai.GenerateEmbedding(skillString)
 		if err != nil {
 			return nil, err
@@ -94,11 +94,11 @@ func (uc *ProfileUseCase) Generate(job_description dto.RoleDescription) (*dto.Re
 	return &resume, nil
 }
 
-func (uc *ProfileUseCase) Create(profile model.Profile) (int, error) {
+func (uc *ProfileUseCase) Create(profile domain.Profile) (int, error) {
 	return uc.repo.Create(profile)
 }
 
-func (uc *ProfileUseCase) Update(profile model.Profile) (bool, error) {
+func (uc *ProfileUseCase) Update(profile domain.Profile) (bool, error) {
 	return uc.repo.Update(profile)
 }
 

@@ -1,4 +1,4 @@
-package model
+package domain
 
 // SkillDTO is a DTO for Swagger documentation purposes
 // Use this structure for API responses to avoid sql.NullString issues in Swagger generation

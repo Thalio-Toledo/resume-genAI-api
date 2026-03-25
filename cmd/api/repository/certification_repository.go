@@ -3,7 +3,6 @@ package repository
 import (
 	"database/sql"
 	"errors"
-	"resume-genAI-api/cmd/api/model"
 )
 
 type CertificationRepository struct {

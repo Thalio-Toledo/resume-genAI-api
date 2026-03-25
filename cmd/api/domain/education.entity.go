@@ -1,4 +1,4 @@
-package model
+package domain
 
 type Education struct {
 	EducationId string `json:"education_id"`

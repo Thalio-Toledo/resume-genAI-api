@@ -1,4 +1,4 @@
-package model
+package domain
 
 type SocialMedia struct {
 	SocialMediaId int    `json:"social_media_id"`
