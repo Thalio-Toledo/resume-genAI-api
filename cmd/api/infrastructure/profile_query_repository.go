@@ -3,23 +3,18 @@ package infrastructure
 import (
 	"database/sql"
 	"encoding/json"
-	"errors"
 	"resume-genAI-api/cmd/api/domain"
 )
 
-type ProfileRepository struct {
-	profiles []domain.Profile
-	db       *sql.DB
+type ProfileQueryRepository struct {
+	db *sql.DB
 }
 
-func NewProfileRepository(db *sql.DB) *ProfileRepository {
-	return &ProfileRepository{
-		profiles: []domain.Profile{},
-		db:       db,
-	}
+func NewProfileQueryRepository(db *sql.DB) *ProfileQueryRepository {
+	return &ProfileQueryRepository{db: db}
 }
 
-func (p *ProfileRepository) Get() ([]domain.Profile, error) {
+func (p *ProfileQueryRepository) Get() ([]domain.Profile, error) {
 	query := `
 		SELECT
 			profile_id,
@@ -63,7 +58,7 @@ func (p *ProfileRepository) Get() ([]domain.Profile, error) {
 	return profiles, nil
 }
 
-func (p *ProfileRepository) FindByID(id int) (*domain.Profile, error) {
+func (p *ProfileQueryRepository) findByID(id int) (*domain.Profile, error) {
 	query := `
 		SELECT
 			profile_id,
@@ -92,7 +87,17 @@ func (p *ProfileRepository) FindByID(id int) (*domain.Profile, error) {
 	return &profile, nil
 }
 
-func (p *ProfileRepository) LoadProjects(profile *domain.Profile) error {
+func (r *ProfileQueryRepository) FindProfile(id int) *ProfileLoader {
+	profile, err := r.findByID(id)
+
+	return &ProfileLoader{
+		repo:    r,
+		profile: profile,
+		err:     err,
+	}
+}
+
+func (p *ProfileQueryRepository) loadProjects(profileId int) ([]domain.Project, error) {
 	query := `
 		SELECT
 			 project_id
@@ -103,9 +108,9 @@ func (p *ProfileRepository) LoadProjects(profile *domain.Profile) error {
 		FROM project 
 		WHERE profile_id = @profile_id
 	`
-	rows, err := p.db.Query(query, sql.Named("profile_id", profile.ProfileId))
+	rows, err := p.db.Query(query, sql.Named("profile_id", profileId))
 	if err != nil {
-		return err
+		return []domain.Project{}, err
 	}
 	defer rows.Close()
 
@@ -122,20 +127,19 @@ func (p *ProfileRepository) LoadProjects(profile *domain.Profile) error {
 			&project.Active,
 		)
 		if err != nil {
-			return err
+			return []domain.Project{}, err
 		}
 		projects = append(projects, project)
 	}
 
 	if err := rows.Err(); err != nil {
-		return err
+		return []domain.Project{}, err
 	}
 
-	profile.Projects = projects
-	return nil
+	return projects, nil
 }
 
-func (p *ProfileRepository) LoadCertifications(profile *domain.Profile) error {
+func (p *ProfileQueryRepository) loadCertifications(profileId int) ([]domain.Certification, error) {
 	query := `
 		SELECT 
 			 certification_id
@@ -146,9 +150,9 @@ func (p *ProfileRepository) LoadCertifications(profile *domain.Profile) error {
 		FROM certification 
 		WHERE profile_id = @profile_id
 	`
-	rows, err := p.db.Query(query, sql.Named("profile_id", profile.ProfileId))
+	rows, err := p.db.Query(query, sql.Named("profile_id", profileId))
 	if err != nil {
-		return err
+		return []domain.Certification{}, err
 	}
 	defer rows.Close()
 
@@ -158,14 +162,14 @@ func (p *ProfileRepository) LoadCertifications(profile *domain.Profile) error {
 		var certification domain.Certification
 
 		err := rows.Scan(
-			&certification.Certification_Id,
+			&certification.CertificationId,
 			&certification.ProfileId,
 			&certification.Name,
 			&certification.Issuer,
 			&certification.DateIssued,
 		)
 		if err != nil {
-			return err
+			return []domain.Certification{}, err
 		}
 
 		certifications = append(certifications, certification)
@@ -173,14 +177,13 @@ func (p *ProfileRepository) LoadCertifications(profile *domain.Profile) error {
 	}
 
 	if err := rows.Err(); err != nil {
-		return err
+		return []domain.Certification{}, err
 	}
 
-	profile.Certifications = certifications
-	return nil
+	return certifications, err
 }
 
-func (p *ProfileRepository) LoadEducations(profile *domain.Profile) error {
+func (p *ProfileQueryRepository) loadEducations(profileId int) ([]domain.Education, error) {
 	query := `
 		  SELECT 
 			 education_id
@@ -193,9 +196,9 @@ func (p *ProfileRepository) LoadEducations(profile *domain.Profile) error {
   		FROM education
 		WHERE profile_id = @profile_id
 	`
-	rows, err := p.db.Query(query, sql.Named("profile_id", profile.ProfileId))
+	rows, err := p.db.Query(query, sql.Named("profile_id", profileId))
 	if err != nil {
-		return err
+		return []domain.Education{}, err
 	}
 	defer rows.Close()
 
@@ -206,7 +209,7 @@ func (p *ProfileRepository) LoadEducations(profile *domain.Profile) error {
 
 		err := rows.Scan(
 			&education.EducationId,
-			&education.ProfileID,
+			&education.ProfileId,
 			&education.Institution,
 			&education.Degree,
 			&education.Field,
@@ -214,21 +217,20 @@ func (p *ProfileRepository) LoadEducations(profile *domain.Profile) error {
 			&education.EndDate,
 		)
 		if err != nil {
-			return err
+			return []domain.Education{}, err
 		}
 
 		educations = append(educations, education)
 	}
 
 	if err := rows.Err(); err != nil {
-		return err
+		return []domain.Education{}, err
 	}
 
-	profile.Educations = educations
-	return nil
+	return educations, nil
 }
 
-func (p *ProfileRepository) LoadExperiences(profile *domain.Profile) error {
+func (p *ProfileQueryRepository) loadExperiences(profileId int) ([]domain.Experience, error) {
 	query := `
 		  SELECT 
 			 experience_id
@@ -242,9 +244,9 @@ func (p *ProfileRepository) LoadExperiences(profile *domain.Profile) error {
   		FROM experience
 		WHERE profile_id = @profile_id
 	`
-	rows, err := p.db.Query(query, sql.Named("profile_id", profile.ProfileId))
+	rows, err := p.db.Query(query, sql.Named("profile_id", profileId))
 	if err != nil {
-		return err
+		return []domain.Experience{}, err
 	}
 	defer rows.Close()
 
@@ -255,7 +257,7 @@ func (p *ProfileRepository) LoadExperiences(profile *domain.Profile) error {
 
 		err := rows.Scan(
 			&experience.ExperienceId,
-			&experience.ProfileID,
+			&experience.ProfileId,
 			&experience.Company,
 			&experience.IsCurrent,
 			&experience.Role,
@@ -264,64 +266,20 @@ func (p *ProfileRepository) LoadExperiences(profile *domain.Profile) error {
 			&experience.EndDate,
 		)
 		if err != nil {
-			return err
+			return []domain.Experience{}, err
 		}
 
 		experiences = append(experiences, experience)
 	}
 
 	if err := rows.Err(); err != nil {
-		return err
+		return []domain.Experience{}, err
 	}
 
-	profile.Experiences = experiences
-	return nil
+	return experiences, nil
 }
 
-func (p *ProfileRepository) AddExperience(experience domain.Experience) (int, error) {
-	query := `
-		INSERT INTO experience (
-			profile_id,
-			company,
-			is_current,
-			role,
-			description,
-			start_date,
-			end_date
-		)
-		OUTPUT INSERTED.experience_id
-		VALUES (
-			@profile_id,
-			@company,
-			@is_current,
-			@role,
-			@description,
-			@start_date,
-			@end_date
-		)
-	`
-
-	var id int
-
-	err := p.db.QueryRow(
-		query,
-		sql.Named("profile_id", experience.ProfileID),
-		sql.Named("company", experience.Company),
-		sql.Named("is_current", experience.IsCurrent),
-		sql.Named("role", experience.Role),
-		sql.Named("description", experience.Description),
-		sql.Named("start_date", experience.StartDate),
-		sql.Named("end_date", experience.EndDate),
-	).Scan(&id)
-
-	if err != nil {
-		return 0, err
-	}
-
-	return id, nil
-}
-
-func (p *ProfileRepository) LoadLanguages(profile *domain.Profile) error {
+func (p *ProfileQueryRepository) loadLanguages(profileId int) ([]domain.Language, error) {
 	query := `
 		  SELECT 
 			 language_id
@@ -331,9 +289,9 @@ func (p *ProfileRepository) LoadLanguages(profile *domain.Profile) error {
   		FROM language
 		WHERE profile_id = @profile_id
 	`
-	rows, err := p.db.Query(query, sql.Named("profile_id", profile.ProfileId))
+	rows, err := p.db.Query(query, sql.Named("profile_id", profileId))
 	if err != nil {
-		return err
+		return []domain.Language{}, err
 	}
 	defer rows.Close()
 
@@ -344,26 +302,25 @@ func (p *ProfileRepository) LoadLanguages(profile *domain.Profile) error {
 
 		err := rows.Scan(
 			&language.LanguageId,
-			&language.ProfileID,
+			&language.ProfileId,
 			&language.Name,
 			&language.Level,
 		)
 		if err != nil {
-			return err
+			return []domain.Language{}, err
 		}
 
 		languages = append(languages, language)
 	}
 
 	if err := rows.Err(); err != nil {
-		return err
+		return []domain.Language{}, err
 	}
 
-	profile.Languages = languages
-	return nil
+	return languages, nil
 }
 
-func (p *ProfileRepository) LoadSkill(profile *domain.Profile) error {
+func (p *ProfileQueryRepository) loadSkills(profileId int) ([]domain.Skill, error) {
 	query := `
 		  SELECT 
 			 skill_id
@@ -374,9 +331,9 @@ func (p *ProfileRepository) LoadSkill(profile *domain.Profile) error {
   		FROM skill
 		WHERE profile_id = @profile_id
 	`
-	rows, err := p.db.Query(query, sql.Named("profile_id", profile.ProfileId))
+	rows, err := p.db.Query(query, sql.Named("profile_id", profileId))
 	if err != nil {
-		return err
+		return []domain.Skill{}, err
 	}
 	defer rows.Close()
 
@@ -387,19 +344,19 @@ func (p *ProfileRepository) LoadSkill(profile *domain.Profile) error {
 
 		err := rows.Scan(
 			&skill.SkillId,
-			&skill.ProfileID,
+			&skill.ProfileId,
 			&skill.Name,
 			&skill.Level,
 			&skill.EmbeddingsJSON,
 		)
 		if err != nil {
-			return err
+			return []domain.Skill{}, err
 		}
 
 		if skill.EmbeddingsJSON.Valid {
 			err = json.Unmarshal([]byte(skill.EmbeddingsJSON.String), &skill.Embeddings)
 			if err != nil {
-				return err
+				return []domain.Skill{}, err
 			}
 		}
 
@@ -407,14 +364,13 @@ func (p *ProfileRepository) LoadSkill(profile *domain.Profile) error {
 	}
 
 	if err := rows.Err(); err != nil {
-		return err
+		return []domain.Skill{}, err
 	}
 
-	profile.Skills = skills
-	return nil
+	return skills, nil
 }
 
-func (p *ProfileRepository) LoadSocialMedia(profile *domain.Profile) error {
+func (p *ProfileQueryRepository) loadSocialMedias(profileId int) ([]domain.SocialMedia, error) {
 	query := `
 		  SELECT 
 			 social_media_id
@@ -425,9 +381,9 @@ func (p *ProfileRepository) LoadSocialMedia(profile *domain.Profile) error {
   		FROM social_media
 		WHERE profile_id = @profile_id
 	`
-	rows, err := p.db.Query(query, sql.Named("profile_id", profile.ProfileId))
+	rows, err := p.db.Query(query, sql.Named("profile_id", profileId))
 	if err != nil {
-		return err
+		return []domain.SocialMedia{}, err
 	}
 	defer rows.Close()
 
@@ -444,112 +400,15 @@ func (p *ProfileRepository) LoadSocialMedia(profile *domain.Profile) error {
 			&socialMedia.Link,
 		)
 		if err != nil {
-			return err
+			return []domain.SocialMedia{}, err
 		}
 
 		socialMedias = append(socialMedias, socialMedia)
 	}
 
 	if err := rows.Err(); err != nil {
-		return err
+		return []domain.SocialMedia{}, err
 	}
 
-	profile.SocialMedias = socialMedias
-	return nil
-}
-
-func (p *ProfileRepository) Create(profile domain.Profile) (int, error) {
-	query := `
-		INSERT INTO profile (
-			name,
-			email,
-			birth_date,
-			phone_number,
-			description
-		)
-		OUTPUT INSERTED.profile_id
-		VALUES (
-			@name,
-			@email,
-			@birth_date,
-			@phone_number,
-			@description
-		)
-	`
-
-	var id int
-
-	err := p.db.QueryRow(
-		query,
-		sql.Named("name", profile.Name),
-		sql.Named("email", profile.Email),
-		sql.Named("birth_date", profile.Birthdate),
-		sql.Named("phone_number", profile.PhoneNumber),
-		sql.Named("description", profile.Description),
-	).Scan(&id)
-
-	if err != nil {
-		return 0, err
-	}
-
-	return id, nil
-}
-
-func (p *ProfileRepository) Update(profile domain.Profile) (bool, error) {
-	query := `
-		UPDATE profile
-		SET
-			name = @name,
-			email = @email,
-			birth_date = @birth_date,
-			phone_number = @phone_number,
-			description = @description
-		WHERE profile_id = @id
-	`
-
-	result, err := p.db.Exec(
-		query,
-		sql.Named("id", profile.ProfileId),
-		sql.Named("name", profile.Name),
-		sql.Named("email", profile.Email),
-		sql.Named("birth_date", profile.Birthdate),
-		sql.Named("phone_number", profile.PhoneNumber),
-		sql.Named("description", profile.Description),
-	)
-	if err != nil {
-		return false, err
-	}
-
-	rows, err := result.RowsAffected()
-	if err != nil {
-		return false, err
-	}
-
-	if rows == 0 {
-		return false, sql.ErrNoRows
-	}
-
-	return true, nil
-}
-
-func (p *ProfileRepository) Delete(id int) (bool, error) {
-	query := `
-		DELETE profile
-		WHERE profile_id = @id
-	`
-	result, err := p.db.Exec(query, sql.Named("id", id))
-
-	if err != nil {
-		return false, err
-	}
-
-	rows, err := result.RowsAffected()
-	if err != nil {
-		return false, err
-	}
-
-	if rows == 0 {
-		return false, errors.New("no rows affected")
-	}
-	return true, nil
+	return socialMedias, nil
 }

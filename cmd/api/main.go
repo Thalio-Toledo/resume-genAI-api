@@ -10,15 +10,15 @@ package main
 import (
 	"context"
 	"log"
+	"resume-genAI-api/cmd/api/application"
 	"resume-genAI-api/cmd/api/database"
+	"resume-genAI-api/cmd/api/infrastructure"
 	"resume-genAI-api/cmd/api/middleware"
-	"resume-genAI-api/cmd/api/repository"
-	"resume-genAI-api/cmd/api/useCase"
+	"resume-genAI-api/cmd/api/presentation"
 	"time"
 
 	// Importa o pacote docs gerado pelo swag para registrar a documentação Swagger
 
-	"resume-genAI-api/cmd/api/controller"
 	_ "resume-genAI-api/cmd/api/docs"
 
 	"github.com/gin-gonic/gin"
@@ -84,57 +84,13 @@ func main() {
 	})
 
 	// Dependências
-	profileRepo := repository.NewProfileRepository(db)
-	profileUC := useCase.NewProfileUseCase(profileRepo)
-	profileCtrl := controller.NewProfileController(profileUC)
-
-	certificationRepo := repository.NewCertificationRepository(db)
-	certificationUC := useCase.NewCertificationUseCase(certificationRepo)
-	certificationCtrl := controller.NewCertificationController(certificationUC)
-
-	contactRepo := repository.NewContactRepository(db)
-	contactUC := useCase.NewContactUseCase(contactRepo)
-	contactCtrl := controller.NewContactController(contactUC)
-
-	educationRepo := repository.NewEducationRepository(db)
-	educationUC := useCase.NewEducationUseCase(educationRepo)
-	educationCtrl := controller.NewEducationController(educationUC)
-
-	experienceRepo := repository.NewExperienceRepository(db)
-	experienceUC := useCase.NewExperienceUseCase(experienceRepo)
-	experienceCtrl := controller.NewExperienceController(experienceUC)
-
-	languageRepo := repository.NewLanguageRepository(db)
-	languageUC := useCase.NewLanguageUseCase(languageRepo)
-	languageCtrl := controller.NewLanguageController(languageUC)
-
-	projectRepo := repository.NewProjectRepository(db)
-	projectUC := useCase.NewProjectUseCase(projectRepo)
-	projectCtrl := controller.NewProjectController(projectUC)
-
-	resumeRepo := repository.NewResumeRepository(db)
-	resumeUC := useCase.NewResumeUseCase(resumeRepo)
-	resumeCtrl := controller.NewResumeController(resumeUC)
-
-	skillRepo := repository.NewSkillRepository(db)
-	skillUC := useCase.NewSkillUseCase(skillRepo)
-	skillCtrl := controller.NewSkillController(skillUC)
-
-	socialMediaRepo := repository.NewSocialMediaRepository(db)
-	socialMediaUC := useCase.NewSocialMediaUseCase(socialMediaRepo)
-	socialMediaCtrl := controller.NewSocialMediaController(socialMediaUC)
+	profileCommandRepo := infrastructure.NewProfileCommandRepository(db)
+	profileQueryRepo := infrastructure.NewProfileQueryRepository(db)
+	profileUC := application.NewProfileUseCase(profileCommandRepo, profileQueryRepo)
+	profileCtrl := presentation.NewProfileController(profileUC)
 
 	// Rotas
 	profileCtrl.RegisterRoutes(r)
-	certificationCtrl.RegisterRoutes(r)
-	contactCtrl.RegisterRoutes(r)
-	educationCtrl.RegisterRoutes(r)
-	experienceCtrl.RegisterRoutes(r)
-	languageCtrl.RegisterRoutes(r)
-	projectCtrl.RegisterRoutes(r)
-	resumeCtrl.RegisterRoutes(r)
-	skillCtrl.RegisterRoutes(r)
-	socialMediaCtrl.RegisterRoutes(r)
 
 	log.Println("SkillMatch AI running on :8080")
 	r.Run(":8080")

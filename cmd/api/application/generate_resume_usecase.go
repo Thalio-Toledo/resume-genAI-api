@@ -2,7 +2,7 @@ package application
 
 import (
 	"fmt"
-	ai "resume-genAI-api/cmd/api/AI"
+	"resume-genAI-api/cmd/api/ai"
 	"resume-genAI-api/cmd/api/domain"
 	"resume-genAI-api/cmd/api/dto"
 	"resume-genAI-api/cmd/api/infrastructure"
@@ -10,16 +10,16 @@ import (
 )
 
 type GenerateResumeUseCase struct {
-	repo               *infrastructure.ProfileRepository
-	findProfileUseCase *FindProfileUseCase
+	repo           *infrastructure.ProfileCommandRepository
+	profileUseCase *ProfileUseCase
 }
 
-func NewGenerateResumeUseCase(repo *infrastructure.ProfileRepository, findUC *FindProfileUseCase) *GenerateResumeUseCase {
-	return &GenerateResumeUseCase{repo: repo, findProfileUseCase: findUC}
+func NewGenerateResumeUseCase(repo *infrastructure.ProfileCommandRepository, findUC *ProfileUseCase) *GenerateResumeUseCase {
+	return &GenerateResumeUseCase{repo: repo, profileUseCase: findUC}
 }
 
 func (uc *GenerateResumeUseCase) Generate(job_description dto.RoleDescription) (*dto.Resume, error) {
-	profile, err := uc.findProfileUseCase.FindByID(job_description.ProfileId)
+	profile, err := uc.profileUseCase.FindByID(job_description.ProfileId)
 	skillsStrings, err := ai.Generate(job_description.Description)
 	if err != nil {
 		return nil, err

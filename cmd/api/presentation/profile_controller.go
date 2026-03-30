@@ -6,7 +6,6 @@ import (
 
 	"resume-genAI-api/cmd/api/application"
 	"resume-genAI-api/cmd/api/domain"
-	"resume-genAI-api/cmd/api/dto"
 
 	"github.com/gin-gonic/gin"
 )
@@ -25,7 +24,6 @@ func (ctrl *ProfileController) RegisterRoutes(r *gin.Engine) {
 		profiles.GET("", ctrl.Get)
 		profiles.GET(":id", ctrl.FindByID)
 		profiles.POST("", ctrl.Create)
-		profiles.POST("/generate", ctrl.Generate)
 		profiles.PUT("", ctrl.Update)
 		profiles.DELETE(":id", ctrl.Delete)
 	}
@@ -94,41 +92,15 @@ func (ctrl *ProfileController) Create(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	id, err := ctrl.useCase.Create(profile)
+
+	err := ctrl.useCase.Create(&profile)
+
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	profile.ProfileId = id
+
 	c.JSON(http.StatusCreated, profile)
-}
-
-// Generate godoc
-//
-//	@Summary		Gera um novo perfil baseado na descrição de vaga
-//	@Description	Gera um novo perfil usando LLMs com base na descrição da vaga
-//	@Tags			profiles
-//	@Accept			json
-//	@Produce		json
-//	@Param			roleDescription	body		dto.RoleDescription	true	"Descrição da vaga"
-//	@Success		201				{object}	model.ProfileDTO
-//	@Failure		400				{object}	model.ErrorResponse
-//	@Router			/profiles/generate [post]
-func (ctrl *ProfileController) Generate(c *gin.Context) {
-
-	var job_description dto.RoleDescription
-	if err := c.ShouldBindJSON(&job_description); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	resume, err := ctrl.useCase.Generate(job_description)
-
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-	c.JSON(http.StatusCreated, resume)
 }
 
 // Update godoc
@@ -150,16 +122,118 @@ func (ctrl *ProfileController) Update(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	success, err := ctrl.useCase.Update(profile)
+	err := ctrl.useCase.Update(&profile)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	if !success {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Profile not found"})
+
+	c.JSON(http.StatusOK, profile)
+}
+
+func (ctrl *ProfileController) AddCertification(c *gin.Context) {
+	var certification domain.Certification
+	if err := c.ShouldBindJSON(&certification); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, profile)
+	err := ctrl.useCase.AddCertification(certification)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, certification)
+}
+
+func (ctrl *ProfileController) AddEducation(c *gin.Context) {
+	var education domain.Education
+	if err := c.ShouldBindJSON(&education); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	err := ctrl.useCase.AddEducation(education)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, education)
+}
+
+func (ctrl *ProfileController) AddExperience(c *gin.Context) {
+	var experience domain.Experience
+	if err := c.ShouldBindJSON(&experience); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	err := ctrl.useCase.AddExperience(experience)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, experience)
+}
+
+func (ctrl *ProfileController) AddLanguage(c *gin.Context) {
+	var language domain.Language
+	if err := c.ShouldBindJSON(&language); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	err := ctrl.useCase.AddLanguage(language)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, language)
+}
+
+func (ctrl *ProfileController) AddProject(c *gin.Context) {
+	var project domain.Project
+	if err := c.ShouldBindJSON(&project); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	err := ctrl.useCase.AddProject(project)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, project)
+}
+
+func (ctrl *ProfileController) AddSkill(c *gin.Context) {
+	var skill domain.Skill
+	if err := c.ShouldBindJSON(&skill); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	err := ctrl.useCase.AddSkill(skill)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, skill)
+}
+
+func (ctrl *ProfileController) AddSocialMedia(c *gin.Context) {
+	var socialMedia domain.SocialMedia
+	if err := c.ShouldBindJSON(&socialMedia); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	err := ctrl.useCase.AddSocialMedia(socialMedia)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, socialMedia)
 }
 
 // Delete godoc
@@ -179,14 +253,11 @@ func (ctrl *ProfileController) Delete(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
 		return
 	}
-	success, err := ctrl.useCase.Delete(id)
+	err = ctrl.useCase.Delete(id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	if !success {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Profile not found"})
-		return
-	}
+
 	c.JSON(http.StatusOK, gin.H{"message": "Profile deleted"})
 }

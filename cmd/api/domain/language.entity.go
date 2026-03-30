@@ -1,8 +1,8 @@
 package domain
 
 type Language struct {
-	LanguageId string `json:"language_id"`
-	ProfileID  int    `json:"profile_id"`
+	LanguageId int    `json:"language_id"`
+	ProfileId  int    `json:"profile_id"`
 	Name       string `json:"name"`
 	Level      string `json:"level"`
 }

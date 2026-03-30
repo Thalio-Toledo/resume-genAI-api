@@ -1,6 +1,9 @@
 package domain
 
-import "errors"
+import (
+	"errors"
+	ai "resume-genAI-api/cmd/api/AI"
+)
 
 type ErrorResponse struct {
 	Error string `json:"error"`
@@ -71,6 +74,8 @@ func (p *Profile) AddSkill(skill Skill) error {
 			return errors.New("Skill already exists for this profile")
 		}
 	}
+	embeddings, _ := ai.GenerateEmbedding(skill.Name)
+	skill.Embeddings = embeddings
 	p.Skills = append(p.Skills, skill)
 	return nil
 }

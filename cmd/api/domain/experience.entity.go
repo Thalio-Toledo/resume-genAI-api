@@ -1,8 +1,8 @@
 package domain
 
 type Experience struct {
-	ExperienceId string `json:"experience_id"`
-	ProfileID    int    `json:"profile_id"`
+	ExperienceId int    `json:"experience_id"`
+	ProfileId    int    `json:"profile_id"`
 	Company      string `json:"company"`
 	IsCurrent    bool   `json:"is_current"`
 	Role         string `json:"role"`

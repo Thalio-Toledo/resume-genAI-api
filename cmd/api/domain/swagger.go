@@ -24,7 +24,6 @@ type ProfileDTO struct {
 	DeletedAt      string          `json:"deleted_at,omitempty"`
 	Projects       []Project       `json:"projects"`
 	Certifications []Certification `json:"certifications"`
-	Contacts       []Contact       `json:"contacts"`
 	SocialMedias   []SocialMedia   `json:"socialMedias"`
 	Educations     []Education     `json:"educations"`
 	Experiences    []Experience    `json:"experiences"`

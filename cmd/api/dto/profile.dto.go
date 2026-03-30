@@ -12,7 +12,6 @@ type ProfileDTO struct {
 
 	Projects       []domain.Project       `json:"projects"`
 	Certifications []domain.Certification `json:"certifications"`
-	Contacts       []domain.Contact       `json:"contacts"`
 	SocialMedias   []domain.SocialMedia   `json:"socialMedias"`
 	Educations     []domain.Education     `json:"educations"`
 	Experiences    []domain.Experience    `json:"experiences"`
