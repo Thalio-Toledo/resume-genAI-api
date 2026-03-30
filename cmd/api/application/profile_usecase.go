@@ -55,6 +55,20 @@ func (uc *ProfileUseCase) AddCertification(certification domain.Certification) e
 	return uc.repoCommand.Save(profile)
 }
 
+func (uc *ProfileUseCase) UpdateCertification(certification domain.Certification) error {
+	profile, err := uc.FindByID(certification.ProfileId)
+	if err != nil {
+		return err
+	}
+
+	err = profile.UpdateCertification(certification)
+	if err != nil {
+		return err
+	}
+
+	return uc.repoCommand.Save(profile)
+}
+
 func (uc *ProfileUseCase) AddEducation(education domain.Education) error {
 	profile, err := uc.FindByID(education.ProfileId)
 	if err != nil {
@@ -62,6 +76,20 @@ func (uc *ProfileUseCase) AddEducation(education domain.Education) error {
 	}
 
 	err = profile.AddEducation(education)
+	if err != nil {
+		return err
+	}
+
+	return uc.repoCommand.Save(profile)
+}
+
+func (uc *ProfileUseCase) UpdateEducation(education domain.Education) error {
+	profile, err := uc.FindByID(education.ProfileId)
+	if err != nil {
+		return err
+	}
+
+	err = profile.UpdateEducation(education)
 	if err != nil {
 		return err
 	}
@@ -83,6 +111,20 @@ func (uc *ProfileUseCase) AddExperience(experience domain.Experience) error {
 	return uc.repoCommand.Save(profile)
 }
 
+func (uc *ProfileUseCase) UpdateExperience(experience domain.Experience) error {
+	profile, err := uc.FindByID(experience.ProfileId)
+	if err != nil {
+		return err
+	}
+
+	err = profile.UpdateExperience(experience)
+	if err != nil {
+		return err
+	}
+
+	return uc.repoCommand.Save(profile)
+}
+
 func (uc *ProfileUseCase) AddLanguage(language domain.Language) error {
 	profile, err := uc.FindByID(language.ProfileId)
 	if err != nil {
@@ -90,6 +132,20 @@ func (uc *ProfileUseCase) AddLanguage(language domain.Language) error {
 	}
 
 	err = profile.AddLanguage(language)
+	if err != nil {
+		return err
+	}
+
+	return uc.repoCommand.Save(profile)
+}
+
+func (uc *ProfileUseCase) UpdateLanguage(language domain.Language) error {
+	profile, err := uc.FindByID(language.ProfileId)
+	if err != nil {
+		return err
+	}
+
+	err = profile.UpdateLanguage(language)
 	if err != nil {
 		return err
 	}
@@ -111,6 +167,20 @@ func (uc *ProfileUseCase) AddProject(project domain.Project) error {
 	return uc.repoCommand.Save(profile)
 }
 
+func (uc *ProfileUseCase) UpdateProject(project domain.Project) error {
+	profile, err := uc.FindByID(project.ProfileId)
+	if err != nil {
+		return err
+	}
+
+	err = profile.UpdateProject(project)
+	if err != nil {
+		return err
+	}
+
+	return uc.repoCommand.Save(profile)
+}
+
 func (uc *ProfileUseCase) AddSkill(skill domain.Skill) error {
 	profile, err := uc.FindByID(skill.ProfileId)
 	if err != nil {
@@ -125,6 +195,20 @@ func (uc *ProfileUseCase) AddSkill(skill domain.Skill) error {
 	return uc.repoCommand.Save(profile)
 }
 
+func (uc *ProfileUseCase) UpdateSkill(skill domain.Skill) error {
+	profile, err := uc.FindByID(skill.ProfileId)
+	if err != nil {
+		return err
+	}
+
+	err = profile.UpdateSkill(skill)
+	if err != nil {
+		return err
+	}
+
+	return uc.repoCommand.Save(profile)
+}
+
 func (uc *ProfileUseCase) AddSocialMedia(socialMedia domain.SocialMedia) error {
 	profile, err := uc.FindByID(socialMedia.ProfileId)
 	if err != nil {
@@ -132,6 +216,20 @@ func (uc *ProfileUseCase) AddSocialMedia(socialMedia domain.SocialMedia) error {
 	}
 
 	err = profile.AddSocialMedia(socialMedia)
+	if err != nil {
+		return err
+	}
+
+	return uc.repoCommand.Save(profile)
+}
+
+func (uc *ProfileUseCase) UpdateSocialMedia(socialMedia domain.SocialMedia) error {
+	profile, err := uc.FindByID(socialMedia.ProfileId)
+	if err != nil {
+		return err
+	}
+
+	err = profile.UpdateSocialMedia(socialMedia)
 	if err != nil {
 		return err
 	}

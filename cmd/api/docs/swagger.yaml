@@ -1,13 +1,6 @@
 basePath: /
 definitions:
-  dto.RoleDescription:
-    properties:
-      description:
-        type: string
-      profile_id:
-        type: integer
-    type: object
-  model.Certification:
+  domain.Certification:
     properties:
       certification_id:
         type: integer
@@ -19,24 +12,17 @@ definitions:
         type: string
       profile_id:
         type: integer
+      skills:
+        items:
+          $ref: '#/definitions/domain.Skill'
+        type: array
     type: object
-  model.Contact:
-    properties:
-      contact_id:
-        type: integer
-      email:
-        type: string
-      phone_number:
-        type: string
-      profile_id:
-        type: integer
-    type: object
-  model.Education:
+  domain.Education:
     properties:
       degree:
         type: string
       education_id:
-        type: string
+        type: integer
       end_date:
         type: string
       field:
@@ -48,12 +34,12 @@ definitions:
       start_date:
         type: string
     type: object
-  model.ErrorResponse:
+  domain.ErrorResponse:
     properties:
       error:
         type: string
     type: object
-  model.Experience:
+  domain.Experience:
     properties:
       company:
         type: string
@@ -62,7 +48,7 @@ definitions:
       end_date:
         type: string
       experience_id:
-        type: string
+        type: integer
       is_current:
         type: boolean
       profile_id:
@@ -72,10 +58,10 @@ definitions:
       start_date:
         type: string
     type: object
-  model.Language:
+  domain.Language:
     properties:
       language_id:
-        type: string
+        type: integer
       level:
         type: string
       name:
@@ -83,7 +69,7 @@ definitions:
       profile_id:
         type: integer
     type: object
-  model.ProfileDTO:
+  domain.ProfileDTO:
     properties:
       active:
         type: boolean
@@ -91,11 +77,7 @@ definitions:
         type: string
       certifications:
         items:
-          $ref: '#/definitions/model.Certification'
-        type: array
-      contacts:
-        items:
-          $ref: '#/definitions/model.Contact'
+          $ref: '#/definitions/domain.Certification'
         type: array
       created_at:
         type: string
@@ -105,17 +87,17 @@ definitions:
         type: string
       educations:
         items:
-          $ref: '#/definitions/model.Education'
+          $ref: '#/definitions/domain.Education'
         type: array
       email:
         type: string
       experiences:
         items:
-          $ref: '#/definitions/model.Experience'
+          $ref: '#/definitions/domain.Experience'
         type: array
       languages:
         items:
-          $ref: '#/definitions/model.Language'
+          $ref: '#/definitions/domain.Language'
         type: array
       name:
         type: string
@@ -125,20 +107,20 @@ definitions:
         type: integer
       projects:
         items:
-          $ref: '#/definitions/model.Project'
+          $ref: '#/definitions/domain.Project'
         type: array
       skills:
         items:
-          $ref: '#/definitions/model.SkillDTO'
+          $ref: '#/definitions/domain.SkillDTO'
         type: array
       socialMedias:
         items:
-          $ref: '#/definitions/model.SocialMedia'
+          $ref: '#/definitions/domain.SocialMedia'
         type: array
       updated_at:
         type: string
     type: object
-  model.Project:
+  domain.Project:
     properties:
       active:
         type: boolean
@@ -155,58 +137,27 @@ definitions:
       profile_id:
         type: integer
       project_id:
-        type: string
+        type: integer
       updated_at:
         type: string
     type: object
-  model.Resume:
+  domain.Skill:
     properties:
-      certification_ids:
-        description: IDs das certificações selecionadas
+      embeddings:
         items:
-          type: string
+          format: float32
+          type: number
         type: array
-      contact_ids:
-        description: IDs dos contatos selecionados
-        items:
-          type: string
-        type: array
-      education_ids:
-        description: IDs das formações selecionadas
-        items:
-          type: string
-        type: array
-      experience_ids:
-        description: IDs das experiências selecionadas
-        items:
-          type: string
-        type: array
-      id:
+      level:
         type: string
-      language_ids:
-        description: IDs dos idiomas selecionados
-        items:
-          type: string
-        type: array
+      name:
+        type: string
       profile_id:
         type: integer
-      project_ids:
-        description: IDs dos projetos selecionados
-        items:
-          type: string
-        type: array
-      skill_ids:
-        description: IDs das skills selecionadas
-        items:
-          type: string
-        type: array
-      social_media_ids:
-        description: IDs das redes sociais selecionadas
-        items:
-          type: string
-        type: array
+      skill_id:
+        type: integer
     type: object
-  model.SkillDTO:
+  domain.SkillDTO:
     properties:
       embeddings:
         items:
@@ -221,7 +172,7 @@ definitions:
       skill_id:
         type: string
     type: object
-  model.SocialMedia:
+  domain.SocialMedia:
     properties:
       handle:
         type: string
@@ -234,6 +185,13 @@ definitions:
       social_media_id:
         type: integer
     type: object
+  dto.RoleDescription:
+    properties:
+      description:
+        type: string
+      profile_id:
+        type: integer
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -241,581 +199,6 @@ info:
   title: Resume GenAI API
   version: "1.0"
 paths:
-  /certifications/:
-    get:
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/model.Certification'
-            type: array
-      summary: Lista todas as certificações
-      tags:
-      - certifications
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: Certificação a ser criada
-        in: body
-        name: certification
-        required: true
-        schema:
-          $ref: '#/definitions/model.Certification'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/model.Certification'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.ErrorResponse'
-      summary: Cria uma nova certificação
-      tags:
-      - certifications
-  /certifications/{id}:
-    delete:
-      parameters:
-      - description: ID da certificação
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            additionalProperties: true
-            type: object
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/model.ErrorResponse'
-      summary: Remove uma certificação
-      tags:
-      - certifications
-    get:
-      parameters:
-      - description: ID da certificação
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/model.Certification'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/model.ErrorResponse'
-      summary: Busca certificação por ID
-      tags:
-      - certifications
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: ID da certificação
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Certificação atualizada
-        in: body
-        name: certification
-        required: true
-        schema:
-          $ref: '#/definitions/model.Certification'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/model.Certification'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/model.ErrorResponse'
-      summary: Atualiza uma certificação
-      tags:
-      - certifications
-  /contacts/:
-    get:
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/model.Contact'
-            type: array
-      summary: Lista todos os contatos
-      tags:
-      - contacts
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: Contato a ser criado
-        in: body
-        name: contact
-        required: true
-        schema:
-          $ref: '#/definitions/model.Contact'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/model.Contact'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.ErrorResponse'
-      summary: Cria um novo contato
-      tags:
-      - contacts
-  /contacts/{id}:
-    delete:
-      parameters:
-      - description: ID do contato
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            additionalProperties: true
-            type: object
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/model.ErrorResponse'
-      summary: Remove um contato
-      tags:
-      - contacts
-    get:
-      parameters:
-      - description: ID do contato
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/model.Contact'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/model.ErrorResponse'
-      summary: Busca contato por ID
-      tags:
-      - contacts
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: ID do contato
-        in: path
-        name: id
-        required: true
-        type: integer
-      - description: Contato atualizado
-        in: body
-        name: contact
-        required: true
-        schema:
-          $ref: '#/definitions/model.Contact'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/model.Contact'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/model.ErrorResponse'
-      summary: Atualiza um contato
-      tags:
-      - contacts
-  /educations/:
-    get:
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/model.Education'
-            type: array
-      summary: Lista todas as formações
-      tags:
-      - educations
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: Formação a ser criada
-        in: body
-        name: education
-        required: true
-        schema:
-          $ref: '#/definitions/model.Education'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/model.Education'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.ErrorResponse'
-      summary: Cria uma nova formação
-      tags:
-      - educations
-  /educations/{id}:
-    delete:
-      parameters:
-      - description: ID da formação
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            additionalProperties: true
-            type: object
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/model.ErrorResponse'
-      summary: Remove uma formação
-      tags:
-      - educations
-    get:
-      parameters:
-      - description: ID da formação
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/model.Education'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/model.ErrorResponse'
-      summary: Busca formação por ID
-      tags:
-      - educations
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: ID da formação
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Formação atualizada
-        in: body
-        name: education
-        required: true
-        schema:
-          $ref: '#/definitions/model.Education'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/model.Education'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/model.ErrorResponse'
-      summary: Atualiza uma formação
-      tags:
-      - educations
-  /experiences/:
-    get:
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/model.Experience'
-            type: array
-      summary: Lista todas as experiências
-      tags:
-      - experiences
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: Experiência a ser criada
-        in: body
-        name: experience
-        required: true
-        schema:
-          $ref: '#/definitions/model.Experience'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/model.Experience'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.ErrorResponse'
-      summary: Cria uma nova experiência
-      tags:
-      - experiences
-  /experiences/{id}:
-    delete:
-      parameters:
-      - description: ID da experiência
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            additionalProperties: true
-            type: object
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/model.ErrorResponse'
-      summary: Remove uma experiência
-      tags:
-      - experiences
-    get:
-      parameters:
-      - description: ID da experiência
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/model.Experience'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/model.ErrorResponse'
-      summary: Busca experiência por ID
-      tags:
-      - experiences
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: ID da experiência
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Experiência atualizada
-        in: body
-        name: experience
-        required: true
-        schema:
-          $ref: '#/definitions/model.Experience'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/model.Experience'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/model.ErrorResponse'
-      summary: Atualiza uma experiência
-      tags:
-      - experiences
-  /languages/:
-    get:
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/model.Language'
-            type: array
-      summary: Lista todos os idiomas
-      tags:
-      - languages
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: Idioma a ser criado
-        in: body
-        name: language
-        required: true
-        schema:
-          $ref: '#/definitions/model.Language'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/model.Language'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.ErrorResponse'
-      summary: Cria um novo idioma
-      tags:
-      - languages
-  /languages/{id}:
-    delete:
-      parameters:
-      - description: ID do idioma
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            additionalProperties: true
-            type: object
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/model.ErrorResponse'
-      summary: Remove um idioma
-      tags:
-      - languages
-    get:
-      parameters:
-      - description: ID do idioma
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/model.Language'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/model.ErrorResponse'
-      summary: Busca idioma por ID
-      tags:
-      - languages
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: ID do idioma
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Idioma atualizado
-        in: body
-        name: language
-        required: true
-        schema:
-          $ref: '#/definitions/model.Language'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/model.Language'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/model.ErrorResponse'
-      summary: Atualiza um idioma
-      tags:
-      - languages
   /profiles/:
     get:
       description: Retorna todos os perfis cadastrados
@@ -826,7 +209,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/model.ProfileDTO'
+              $ref: '#/definitions/domain.ProfileDTO'
             type: array
       summary: Lista todos os perfis
       tags:
@@ -841,19 +224,48 @@ paths:
         name: profile
         required: true
         schema:
-          $ref: '#/definitions/model.ProfileDTO'
+          $ref: '#/definitions/domain.ProfileDTO'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/model.ProfileDTO'
+            $ref: '#/definitions/domain.ProfileDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/model.ErrorResponse'
+            $ref: '#/definitions/domain.ErrorResponse'
       summary: Cria um novo perfil
+      tags:
+      - profiles
+    put:
+      consumes:
+      - application/json
+      description: Atualiza um perfil existente
+      parameters:
+      - description: Perfil atualizado
+        in: body
+        name: profile
+        required: true
+        schema:
+          $ref: '#/definitions/domain.ProfileDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.ProfileDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      summary: Atualiza um perfil
       tags:
       - profiles
   /profiles/{id}:
@@ -876,11 +288,11 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/model.ErrorResponse'
+            $ref: '#/definitions/domain.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/model.ErrorResponse'
+            $ref: '#/definitions/domain.ErrorResponse'
       summary: Remove um perfil
       tags:
       - profiles
@@ -898,57 +310,415 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.ProfileDTO'
+            $ref: '#/definitions/domain.ProfileDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/model.ErrorResponse'
+            $ref: '#/definitions/domain.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/model.ErrorResponse'
+            $ref: '#/definitions/domain.ErrorResponse'
       summary: Busca perfil por ID
       tags:
       - profiles
-    put:
+  /profiles/add-certification:
+    post:
       consumes:
       - application/json
-      description: Atualiza um perfil existente pelo ID
+      description: Adiciona uma nova certificação a um perfil existente
       parameters:
-      - description: ID do perfil
-        in: path
-        name: id
-        required: true
-        type: integer
-      - description: Perfil atualizado
+      - description: Certificação a ser adicionada
         in: body
-        name: profile
+        name: certification
         required: true
         schema:
-          $ref: '#/definitions/model.ProfileDTO'
+          $ref: '#/definitions/domain.Certification'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.ProfileDTO'
+            $ref: '#/definitions/domain.Certification'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/model.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/model.ErrorResponse'
-      summary: Atualiza um perfil
+            $ref: '#/definitions/domain.ErrorResponse'
+      summary: Adiciona uma certificação ao perfil
       tags:
       - profiles
-  /profiles/generate:
+  /profiles/add-education:
     post:
       consumes:
       - application/json
-      description: Gera um novo perfil usando LLMs com base na descrição da vaga
+      description: Adiciona uma nova formação educacional a um perfil existente
+      parameters:
+      - description: Educação a ser adicionada
+        in: body
+        name: education
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Education'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Education'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      summary: Adiciona educação ao perfil
+      tags:
+      - profiles
+  /profiles/add-experience:
+    post:
+      consumes:
+      - application/json
+      description: Adiciona uma nova experiência profissional a um perfil existente
+      parameters:
+      - description: Experiência a ser adicionada
+        in: body
+        name: experience
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Experience'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Experience'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      summary: Adiciona experiência ao perfil
+      tags:
+      - profiles
+  /profiles/add-language:
+    post:
+      consumes:
+      - application/json
+      description: Adiciona um novo idioma a um perfil existente
+      parameters:
+      - description: Idioma a ser adicionado
+        in: body
+        name: language
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Language'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Language'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      summary: Adiciona idioma ao perfil
+      tags:
+      - profiles
+  /profiles/add-project:
+    post:
+      consumes:
+      - application/json
+      description: Adiciona um novo projeto a um perfil existente
+      parameters:
+      - description: Projeto a ser adicionado
+        in: body
+        name: project
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Project'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Project'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      summary: Adiciona projeto ao perfil
+      tags:
+      - profiles
+  /profiles/add-skill:
+    post:
+      consumes:
+      - application/json
+      description: Adiciona uma nova habilidade a um perfil existente
+      parameters:
+      - description: Habilidade a ser adicionada
+        in: body
+        name: skill
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Skill'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Skill'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      summary: Adiciona habilidade ao perfil
+      tags:
+      - profiles
+  /profiles/add-social-media:
+    post:
+      consumes:
+      - application/json
+      description: Adiciona uma nova rede social a um perfil existente
+      parameters:
+      - description: Rede social a ser adicionada
+        in: body
+        name: socialMedia
+        required: true
+        schema:
+          $ref: '#/definitions/domain.SocialMedia'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.SocialMedia'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      summary: Adiciona rede social ao perfil
+      tags:
+      - profiles
+  /profiles/update-certification:
+    put:
+      consumes:
+      - application/json
+      description: Atualiza uma certificação existente em um perfil
+      parameters:
+      - description: Certificação a ser atualizada
+        in: body
+        name: certification
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Certification'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Certification'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      summary: Atualiza uma certificação do perfil
+      tags:
+      - profiles
+  /profiles/update-education:
+    put:
+      consumes:
+      - application/json
+      description: Atualiza uma formação educacional existente em um perfil
+      parameters:
+      - description: Educação a ser atualizada
+        in: body
+        name: education
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Education'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Education'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      summary: Atualiza educação do perfil
+      tags:
+      - profiles
+  /profiles/update-experience:
+    put:
+      consumes:
+      - application/json
+      description: Atualiza uma experiência profissional existente em um perfil
+      parameters:
+      - description: Experiência a ser atualizada
+        in: body
+        name: experience
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Experience'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Experience'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      summary: Atualiza experiência do perfil
+      tags:
+      - profiles
+  /profiles/update-language:
+    put:
+      consumes:
+      - application/json
+      description: Atualiza um idioma existente em um perfil
+      parameters:
+      - description: Idioma a ser atualizado
+        in: body
+        name: language
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Language'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Language'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      summary: Atualiza idioma do perfil
+      tags:
+      - profiles
+  /profiles/update-project:
+    put:
+      consumes:
+      - application/json
+      description: Atualiza um projeto existente em um perfil
+      parameters:
+      - description: Projeto a ser atualizado
+        in: body
+        name: project
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Project'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Project'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      summary: Atualiza projeto do perfil
+      tags:
+      - profiles
+  /profiles/update-skill:
+    put:
+      consumes:
+      - application/json
+      description: Atualiza uma habilidade existente em um perfil
+      parameters:
+      - description: Habilidade a ser atualizada
+        in: body
+        name: skill
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Skill'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Skill'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      summary: Atualiza habilidade do perfil
+      tags:
+      - profiles
+  /profiles/update-social-media:
+    put:
+      consumes:
+      - application/json
+      description: Atualiza uma rede social existente em um perfil
+      parameters:
+      - description: Rede social a ser atualizada
+        in: body
+        name: socialMedia
+        required: true
+        schema:
+          $ref: '#/definitions/domain.SocialMedia'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.SocialMedia'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      summary: Atualiza rede social do perfil
+      tags:
+      - profiles
+  /resume/generate:
+    post:
+      consumes:
+      - application/json
+      description: Gera um novo currículo usando LLMs com base na descrição da vaga
       parameters:
       - description: Descrição da vaga
         in: body
@@ -962,472 +732,12 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/model.ProfileDTO'
+            $ref: '#/definitions/domain.ProfileDTO'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/model.ErrorResponse'
-      summary: Gera um novo perfil baseado na descrição de vaga
+            $ref: '#/definitions/domain.ErrorResponse'
+      summary: Gera um novo currículo baseado na descrição de vaga
       tags:
-      - profiles
-  /projects/:
-    get:
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/model.Project'
-            type: array
-      summary: Lista todos os projetos
-      tags:
-      - projects
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: Projeto a ser criado
-        in: body
-        name: project
-        required: true
-        schema:
-          $ref: '#/definitions/model.Project'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/model.Project'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.ErrorResponse'
-      summary: Cria um novo projeto
-      tags:
-      - projects
-  /projects/{id}:
-    delete:
-      parameters:
-      - description: ID do projeto
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            additionalProperties: true
-            type: object
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/model.ErrorResponse'
-      summary: Remove um projeto
-      tags:
-      - projects
-    get:
-      parameters:
-      - description: ID do projeto
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/model.Project'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/model.ErrorResponse'
-      summary: Busca projeto por ID
-      tags:
-      - projects
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: ID do projeto
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Projeto atualizado
-        in: body
-        name: project
-        required: true
-        schema:
-          $ref: '#/definitions/model.Project'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/model.Project'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/model.ErrorResponse'
-      summary: Atualiza um projeto
-      tags:
-      - projects
-  /resumes/:
-    get:
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/model.Resume'
-            type: array
-      summary: Lista todos os currículos
-      tags:
-      - resumes
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: Currículo a ser criado
-        in: body
-        name: resume
-        required: true
-        schema:
-          $ref: '#/definitions/model.Resume'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/model.Resume'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.ErrorResponse'
-      summary: Cria um novo currículo
-      tags:
-      - resumes
-  /resumes/{id}:
-    delete:
-      parameters:
-      - description: ID do currículo
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            additionalProperties: true
-            type: object
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/model.ErrorResponse'
-      summary: Remove um currículo
-      tags:
-      - resumes
-    get:
-      parameters:
-      - description: ID do currículo
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/model.Resume'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/model.ErrorResponse'
-      summary: Busca currículo por ID
-      tags:
-      - resumes
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: ID do currículo
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Currículo atualizado
-        in: body
-        name: resume
-        required: true
-        schema:
-          $ref: '#/definitions/model.Resume'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/model.Resume'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/model.ErrorResponse'
-      summary: Atualiza um currículo
-      tags:
-      - resumes
-  /skills/:
-    get:
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/model.SkillDTO'
-            type: array
-      summary: Lista todas as skills
-      tags:
-      - skills
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: Skill a ser criada
-        in: body
-        name: skill
-        required: true
-        schema:
-          $ref: '#/definitions/model.SkillDTO'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/model.SkillDTO'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.ErrorResponse'
-      summary: Cria uma nova skill
-      tags:
-      - skills
-  /skills/{id}:
-    delete:
-      parameters:
-      - description: ID da skill
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            additionalProperties: true
-            type: object
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/model.ErrorResponse'
-      summary: Remove uma skill
-      tags:
-      - skills
-    get:
-      parameters:
-      - description: ID da skill
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/model.SkillDTO'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/model.ErrorResponse'
-      summary: Busca skill por ID
-      tags:
-      - skills
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: ID da skill
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Skill atualizada
-        in: body
-        name: skill
-        required: true
-        schema:
-          $ref: '#/definitions/model.SkillDTO'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/model.SkillDTO'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/model.ErrorResponse'
-      summary: Atualiza uma skill
-      tags:
-      - skills
-  /socialmedia/:
-    get:
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/model.SocialMedia'
-            type: array
-      summary: Lista todas as redes sociais
-      tags:
-      - socialmedias
-    post:
-      consumes:
-      - application/json
-      parameters:
-      - description: Rede social a ser criada
-        in: body
-        name: socialmedia
-        required: true
-        schema:
-          $ref: '#/definitions/model.SocialMedia'
-      produces:
-      - application/json
-      responses:
-        "201":
-          description: Created
-          schema:
-            $ref: '#/definitions/model.SocialMedia'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.ErrorResponse'
-      summary: Cria uma nova rede social
-      tags:
-      - socialmedias
-  /socialmedias/{id}:
-    delete:
-      parameters:
-      - description: ID da rede social
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            additionalProperties: true
-            type: object
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/model.ErrorResponse'
-      summary: Remove uma rede social
-      tags:
-      - socialmedias
-    get:
-      parameters:
-      - description: ID da rede social
-        in: path
-        name: id
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/model.SocialMedia'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/model.ErrorResponse'
-      summary: Busca rede social por ID
-      tags:
-      - socialmedias
-    put:
-      consumes:
-      - application/json
-      parameters:
-      - description: ID da rede social
-        in: path
-        name: id
-        required: true
-        type: integer
-      - description: Rede social atualizada
-        in: body
-        name: socialmedia
-        required: true
-        schema:
-          $ref: '#/definitions/model.SocialMedia'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/model.SocialMedia'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/model.ErrorResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/model.ErrorResponse'
-      summary: Atualiza uma rede social
-      tags:
-      - socialmedias
+      - resume
 swagger: "2.0"

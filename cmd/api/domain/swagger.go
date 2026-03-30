@@ -30,3 +30,8 @@ type ProfileDTO struct {
 	Skills         []SkillDTO      `json:"skills"`
 	Languages      []Language      `json:"languages"`
 }
+
+// ErrorResponse is a standard error response structure for Swagger
+type ErrorResponse struct {
+	Error string `json:"error"`
+}

@@ -89,8 +89,13 @@ func main() {
 	profileUC := application.NewProfileUseCase(profileCommandRepo, profileQueryRepo)
 	profileCtrl := presentation.NewProfileController(profileUC)
 
+	// Dependências ResumeController
+	resumeUC := application.NewGenerateResumeUseCase(profileUC)
+	resumeCtrl := presentation.NewResumeController(resumeUC)
+
 	// Rotas
 	profileCtrl.RegisterRoutes(r)
+	resumeCtrl.RegisterRoutes(r)
 
 	log.Println("SkillMatch AI running on :8080")
 	r.Run(":8080")

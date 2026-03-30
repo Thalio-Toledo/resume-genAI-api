@@ -2,12 +2,9 @@ package domain
 
 import (
 	"errors"
-	ai "resume-genAI-api/cmd/api/AI"
+	ai "resume-genAI-api/cmd/api/ai"
 )
 
-type ErrorResponse struct {
-	Error string `json:"error"`
-}
 type Profile struct {
 	BaseModel
 	ProfileId   int    `json:"profile_id"`
@@ -88,4 +85,76 @@ func (p *Profile) AddLanguage(lang Language) error {
 	}
 	p.Languages = append(p.Languages, lang)
 	return nil
+}
+
+func (p *Profile) UpdateProject(proj Project) error {
+	for i, pro := range p.Projects {
+		if pro.ProjectId == proj.ProjectId {
+			p.Projects[i] = proj
+			return nil
+		}
+	}
+	return errors.New("Project not found for this profile")
+}
+
+func (p *Profile) UpdateCertification(cert Certification) error {
+	for i, c := range p.Certifications {
+		if c.CertificationId == cert.CertificationId {
+			p.Certifications[i] = cert
+			return nil
+		}
+	}
+	return errors.New("Certification not found for this profile")
+}
+
+func (p *Profile) UpdateSocialMedia(soc SocialMedia) error {
+	for i, s := range p.SocialMedias {
+		if s.SocialMediaId == soc.SocialMediaId {
+			p.SocialMedias[i] = soc
+			return nil
+		}
+	}
+	return errors.New("SocialMedia not found for this profile")
+}
+
+func (p *Profile) UpdateEducation(edu Education) error {
+	for i, e := range p.Educations {
+		if e.EducationId == edu.EducationId {
+			p.Educations[i] = edu
+			return nil
+		}
+	}
+	return errors.New("Education not found for this profile")
+}
+
+func (p *Profile) UpdateExperience(ex Experience) error {
+	for i, e := range p.Experiences {
+		if e.ExperienceId == ex.ExperienceId {
+			p.Experiences[i] = ex
+			return nil
+		}
+	}
+	return errors.New("Experience not found for this profile")
+}
+
+func (p *Profile) UpdateSkill(skill Skill) error {
+	for i, sk := range p.Skills {
+		if sk.SkillId == skill.SkillId {
+			embeddings, _ := ai.GenerateEmbedding(skill.Name)
+			skill.Embeddings = embeddings
+			p.Skills[i] = skill
+			return nil
+		}
+	}
+	return errors.New("Skill not found for this profile")
+}
+
+func (p *Profile) UpdateLanguage(lang Language) error {
+	for i, l := range p.Languages {
+		if l.LanguageId == lang.LanguageId {
+			p.Languages[i] = lang
+			return nil
+		}
+	}
+	return errors.New("Language not found for this profile")
 }

@@ -5,17 +5,15 @@ import (
 	"resume-genAI-api/cmd/api/ai"
 	"resume-genAI-api/cmd/api/domain"
 	"resume-genAI-api/cmd/api/dto"
-	"resume-genAI-api/cmd/api/infrastructure"
 	skillMatch "resume-genAI-api/cmd/api/utils"
 )
 
 type GenerateResumeUseCase struct {
-	repo           *infrastructure.ProfileCommandRepository
 	profileUseCase *ProfileUseCase
 }
 
-func NewGenerateResumeUseCase(repo *infrastructure.ProfileCommandRepository, findUC *ProfileUseCase) *GenerateResumeUseCase {
-	return &GenerateResumeUseCase{repo: repo, profileUseCase: findUC}
+func NewGenerateResumeUseCase(findUC *ProfileUseCase) *GenerateResumeUseCase {
+	return &GenerateResumeUseCase{profileUseCase: findUC}
 }
 
 func (uc *GenerateResumeUseCase) Generate(job_description dto.RoleDescription) (*dto.Resume, error) {
